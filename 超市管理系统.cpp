@@ -76,17 +76,19 @@ void show_cart()
     system("cls");
     FILE* fp1 = fopen("SHOP", "r");
     printf("购物列表显示");
-    for (int i = 0; fread(SHOP + i, sizeof(SP), 1, fp1); i++)
+    for (int i = 0; fread(SHOP + i, sizeof(SP) != 0, 1, fp1); i++)
     {
         printf("-------------------------------\n");
         printf("名称\t数量\t价格\n");
         printf("%s\t%d\t", SHOP[i].name, SHOP[i].num);
         printf("\n");
     }
+    fclose(fp1);
 }
 //购物车物品添加
 void add_cart()
 {
+    char  choice = NULL;
     while (1)
     {
         FILE* fp;
@@ -98,8 +100,8 @@ void add_cart()
         printf("\n");
         if ((fp = fopen("NAME", "r")) == NULL)
         {
-            printf("文件出现错误，请检查代码部分");
-            continue;
+            printf("文件出现错误，请检查代码部分(或者当前库存中无物品，请自行退出)\n");
+            break;
         }
         for (int j = 0; fread(NAME + j, sizeof(ZL), 1, fp) != 0; j++)
         {
@@ -122,13 +124,13 @@ void add_cart()
                     else
                     {
                         system("cls");
+                        printf("\n");
                         printf("好的，已为您记录\n\n");
                         break;
                     }
                 }
-                printf("还需要继续购物吗？（输入Y继续，输入N结束）");
-                char  choice;
-                scanf("%c%*c", &choice);
+                printf("还需要继续购物吗？（输入Y继续，输入N结束）\n");
+                scanf("%*c%c", &choice);
                 if (choice == 'N' || choice == 'n')
                 {
                     break;
@@ -138,7 +140,19 @@ void add_cart()
                     cart_num++;
                     continue;
                 }
+                else
+                {
+                    printf("请输入正确的字母");
+                    continue;
+                }
             }
+        }
+        if (choice == 'N' || choice == 'n')
+        {
+            system("cls");
+            fwrite(SHOP, sizeof(SHOP), cart_num, fp1);
+            fclose(fp1);
+            break;
         }
     }
 }
@@ -159,11 +173,16 @@ void shop_car()
             switch (num1)
             {
             case 1:
-                printf("当前无\n");
+                FILE * fp = fopen("SHOP", "r");
+                if (fp == NULL)
+                {
+                    printf("当前无选中物品");
+                    break;
+                }
+                show_cart();
                 break;
             case 2:
                 add_cart();
-                break;
                 break;
             case 3:
                 return;
@@ -175,6 +194,27 @@ void shop_car()
             printf("请输入正确的数字！\n\n");
         }
     }
+}
+//结算部分(还有，这是自己写的，哪有总是网上抄嘛，那样就一点也没有成就感了)
+void prince_sum()
+{
+    FILE* fp = fopen("NAME", "r");
+    FILE* fp1 = fopen("SHOP", "r");
+    char OB[100];
+    int PR_SUM = 0;
+    for (int i = 0; fread(SHOP, sizeof(ZL), 1, fp) != 0; i++)
+    {
+        strcpy(OB, SHOP[i].name);
+        for (int j = 0; fread(NAME, sizeof(SP), 1, fp1) != 0; j++)
+        {
+            if (strcmp(NAME[j].name, OB) == 0)
+            {
+                PR_SUM += SHOP[j].num * NAME[j].prince;
+            }
+        }
+    }
+
+
 }
 
 //程序入口
@@ -205,7 +245,7 @@ int main()
                 {
                     system("cls");
                     printf("——当前系统内无商品，请添加商品！——\n");
-                }break;
+                }
                 show();
                 break;
             }
@@ -213,6 +253,7 @@ int main()
                 shop_car();
                 break;
             case 4:
+                prince_sum();
                 break;
             case 5:
                 printf("好的，祝您购物愉快！");
