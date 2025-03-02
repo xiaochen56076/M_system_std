@@ -5,16 +5,15 @@ char object[100][100];
 int number[100], num1, cart_num = 0;
 
 //商品信息和购物车信息
-typedef struct All {
+typedef struct All_IFN {
     char name[100];
     int num;
-    int prince;
+    double price;
 } ZL;
-typedef struct SHOP
-{
+typedef struct SHOP_IFN{
     char name[100];
     int num;
-    double prince;
+    double price;
 } SP;
 
 ZL NAME[100] = {};
@@ -43,7 +42,7 @@ int create_ifn()
         printf("数量：");
         scanf("%d", &NAME[num].num);
         printf("价格：");
-        scanf("%d", &NAME[num].prince);
+        scanf("%lf", &NAME[num].price);
         printf("\n");
     }
     if ((fp = fopen("NAME", "a")) == NULL)
@@ -51,7 +50,7 @@ int create_ifn()
         printf("写入文件失败");
         return 0;
     }
-    fwrite(NAME, sizeof(ZL), 4, fp);
+    fwrite(NAME, sizeof(ZL), 4, fp);//将前面数组里面的数据写入到文件里，以防止程序结束，数据丢失
     fclose(fp);
     return 0;
 }
@@ -65,7 +64,7 @@ void show()
     {
         printf("-------------------------------\n");
         printf("名称\t数量\t价格\n");
-        printf("%s\t%d\t%d元", NAME[i].name, NAME[i].num, NAME[i].prince);
+        printf("%s\t%d\t%.2f元", NAME[i].name, NAME[i].num, NAME[i].price);
         printf("\n");
     }
     fclose(fp);
@@ -75,12 +74,12 @@ void show_cart()
 {
     system("cls");
     FILE* fp1 = fopen("SHOP", "r");
-    printf("购物列表显示");
-    for (int i = 0; fread(SHOP + i, sizeof(SP) != 0, 1, fp1); i++)
+    printf("购物列表显示\n");
+    for (int i = 0; fread(SHOP + i, sizeof(SP), 1, fp1) != 0; i++)
     {
         printf("-------------------------------\n");
         printf("名称\t数量\t价格\n");
-        printf("%s\t%d\t", SHOP[i].name, SHOP[i].num);
+        printf("%s\t%d\t%.2f元", SHOP[i].name, SHOP[i].num, SHOP[i].price);
         printf("\n");
     }
     fclose(fp1);
@@ -88,17 +87,17 @@ void show_cart()
 //购物车物品添加
 void add_cart()
 {
-    char  choice = NULL;
+    char  choice = '\0';
+    FILE* fp = fopen("NAME", "r");
+    FILE* fp1 = fopen("SHOP", "a");
     while (1)
     {
-        FILE* fp;
-        FILE* fp1 = fopen("SHOP", "a");
-        char name[10];
+        char name[100];
         printf("输入需要物品的名称：");
         scanf("%s", SHOP[cart_num].name);
         TOOL_SUFFIX(name);
         printf("\n");
-        if ((fp = fopen("NAME", "r")) == NULL)
+        if (fp == NULL)//判断文件是否为空
         {
             printf("文件出现错误，请检查代码部分(或者当前库存中无物品，请自行退出)\n");
             break;
@@ -110,13 +109,14 @@ void add_cart()
                 printf("已找到当前物品\n");
                 printf("-----------------------------\n");
                 printf("名称\t数量\t价格\n");
-                printf("%s\t%d\t%d元", NAME[j].name, NAME[j].num, NAME[j].prince);
+                printf("%s\t%d\t%f元", NAME[j].name, NAME[j].num, NAME[j].price);
+                SHOP[cart_num].price = (double)NAME[j].price;
                 while (1)
                 {
                     printf("\n");
                     printf("输入需要的数量：");
                     scanf("%d", &SHOP[cart_num].num);
-                    if (SHOP[cart_num].num > NAME[j].num)
+                    if (SHOP[cart_num].num > NAME[j].num)//判断数量是否足够
                     {
                         printf("库存数量不足，请重新输入您需要的数量");
                         continue;
@@ -146,16 +146,25 @@ void add_cart()
                     continue;
                 }
             }
+            else
+            {
+                printf("抱歉，当前无此商品\n");
+                memset(name, 0, sizeof(name));
+                break;
+            }
         }
         if (choice == 'N' || choice == 'n')
         {
             system("cls");
-            fwrite(SHOP, sizeof(SHOP), cart_num, fp1);
+            cart_num += 1;
+            fwrite(SHOP, sizeof(SP), cart_num, fp1);
             fclose(fp1);
+            fclose(fp);
             break;
         }
     }
 }
+
 //购物车
 void shop_car()
 {
@@ -173,14 +182,18 @@ void shop_car()
             switch (num1)
             {
             case 1:
-                FILE * fp = fopen("SHOP", "r");
-                if (fp == NULL)
+            {
+                FILE* fp1 = fopen("SHOP", "r");
+                if (fp1 == NULL)
                 {
-                    printf("当前无选中物品");
+                    printf("当前无选中物品\n");
+                    printf("0");
                     break;
                 }
+                fclose(fp1);
                 show_cart();
                 break;
+            }
             case 2:
                 add_cart();
                 break;
@@ -195,13 +208,13 @@ void shop_car()
         }
     }
 }
-//结算部分(还有，这是自己写的，哪有总是网上抄嘛，那样就一点也没有成就感了)
-void prince_sum()
+//结算部分
+void price_sum()
 {
     FILE* fp = fopen("NAME", "r");
     FILE* fp1 = fopen("SHOP", "r");
     char OB[100];
-    int PR_SUM = 0;
+    double PR_SUM = 0;
     for (int i = 0; fread(SHOP, sizeof(ZL), 1, fp) != 0; i++)
     {
         strcpy(OB, SHOP[i].name);
@@ -209,12 +222,13 @@ void prince_sum()
         {
             if (strcmp(NAME[j].name, OB) == 0)
             {
-                PR_SUM += SHOP[j].num * NAME[j].prince;
+                PR_SUM += SHOP[j].num * NAME[j].price;
             }
         }
     }
-
-
+    memset(SHOP, 0, sizeof(SHOP));
+    fclose(fp);
+    fclose(fp1);
 }
 
 //程序入口
@@ -239,12 +253,13 @@ int main()
                 break;
             case 2:
             {
-                    //这里是判断现在库存里面是否有
+                 //这里是判断现在库存里面是否有
                 FILE* fp = fopen("NAME", "r");
                 if (fp == NULL)
                 {
                     system("cls");
                     printf("——当前系统内无商品，请添加商品！——\n");
+                    continue;
                 }
                 show();
                 break;
@@ -253,7 +268,7 @@ int main()
                 shop_car();
                 break;
             case 4:
-                prince_sum();
+                price_sum();
                 break;
             case 5:
                 printf("好的，祝您购物愉快！");
