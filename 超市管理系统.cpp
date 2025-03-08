@@ -27,29 +27,79 @@ void TOOL_SUFFIX(char shuzu[])
     所以加一个强制转换*/
     shuzu[strlong] = '\0';
 }
+//读取商品文件数
+int  NUM(ZL shuzu[])
+{
+    int shu = 0;
+    FILE* fp = fopen("NAME", "r");
+    while (fread(&NAME[shu], sizeof(ZL), 1, fp) != 0)
+    {
+        shu++;
+    }
+    fclose(fp);
+    return shu;
+}
+//读取购物车文件数
+int  NUM(SP shuzu[])
+{
+    int shu = 0;
+    FILE* fp = fopen("NAME", "r");
+    while (fread(&NAME[shu], sizeof(ZL), 1, fp) != 0)
+    {
+        shu++;
+    }
+    fclose(fp);
+    return shu;
+}
 //创建物品信息（包含续添加）
 void create_ifn()
 {
     system("cls");
     FILE* fp = fopen("NAME", "r");
     char name[100];
+    int shuzi = 0, BL = 0;
+    if (fp != nullptr)
+    {
+        shuzi = NUM(NAME);
+    }
+    printf("%d", shuzi);
     printf("输入信息\n\n");
     for(int num = 0; num < 4; num++)
     {
+        BL = 0;
         printf("名称：");
         scanf("%s", name);
-        printf("数量：");
-        scanf("%d", &NAME[num].num);
-        printf("价格：");
-        scanf("%lf", &NAME[num].price);
-        printf("\n");
+        for (int i = 0; i < shuzi; i++)
+        {
+            if (strcmp(NAME[i].name, name) == 0)
+            {
+                int SL = 0;
+                printf("数量：");
+                scanf("%d", &SL);
+                NAME[i].num += SL;
+                printf("\n");
+                BL = 1;
+                break;
+            }
+        }
+        if(!BL)
+        {
+            strcpy(NAME[shuzi].name, name);
+            printf("数量：");
+            scanf("%d", &NAME[shuzi].num);
+            printf("价格：");
+            scanf("%lf", &NAME[shuzi].price);
+            shuzi++;
+            printf("\n");
+        }
     }
     if ((fp = fopen("NAME", "a")) == NULL)
     {
         printf("写入文件失败");
         return;
     }
-    fwrite(NAME, sizeof(ZL), 4, fp);//将前面数组里面的数据写入到文件里，以防止程序结束，数据丢失
+    fp = fopen("NAME", "w");
+    fwrite(NAME, sizeof(ZL), shuzi, fp);//将前面数组里面的数据写入到文件里，以防止程序结束，数据丢失
     fclose(fp);
     return;
 }
@@ -72,7 +122,13 @@ void show()
 void show_cart()
 {
     system("cls");
-    FILE* fp1 = fopen("SHOP", "r");
+    FILE* fp1 = NULL;
+    if ((fp1 = fopen("SHOP", "r")) == NULL)
+    {
+        printf("\n------当前无选定商品------\n");
+        fp1 = fopen("SHOP", "w");
+        return;
+    }
     for (int i = 0; fread(&SHOP[i], sizeof(SP), 1, fp1) != 0; i++)
     {
         printf("-------------------------------\n");
@@ -85,48 +141,51 @@ void show_cart()
 //购物车物品添加
 void add_cart()
 {
-    int cart_in = 0;
-    int cart_in_sp = 0;
-    FILE* fp1 = fopen("SHOP", "r");
-    FILE* fp = fopen("NAME", "r");
+    int cart_in = 0, cart_in_sp = 0, shuzi = 0;
+    FILE* fp1 = NULL;
+    FILE* fp = NULL;
+    if ((fp1 = fopen("SHOP", "r")) == NULL)
+    {
+        fp1 = fopen("SHOP", "w");
+        fclose(fp1);
+    }
+    fp1 = fopen("SHOP", "r");
+    fp = fopen("NAME", "r");
     printf("\n");
     //这里三个是为了检测文件是否打开成功
     if (fp1 == nullptr)
     {
         printf("\nfp1文件打开失败\n");
     }
-    if (fp == nullptr)
-    {
-        printf("fp文件打开失败\n");
-    }
-    if (fp == NULL)//判断文件是否为空
+    if (fp == nullptr)//判断文件是否为空
     {
         printf("文件出现错误，请检查代码部分(或者当前库存中无物品，请自行退出)\n");
         return;
     }
+    //将文件数据存储到数组当中来
+    if(fp1 != nullptr)
+    {
+        shuzi = NUM(SHOP);
+        while (fread(&SHOP[cart_in_sp], sizeof(SP), 1, fp1))
+        {
+            cart_in_sp++;
+        }
+    }
+    while (fread(&NAME[cart_in], sizeof(SP), 1, fp) == 1)
+    {   
+        cart_in++;
+    }
+    fclose(fp);
+    fclose(fp1);
     while (1)
     {
-        bool CT = false;
+        int CT = 0, BL = 0;
         char name[100];
-        //将文件数据存储到数组当中来
-        if(fp1 != nullptr)
-        {
-            while (fread(&SHOP[cart_in_sp], sizeof(SP), 1, fp1))
-            {
-                cart_in_sp++;
-            }
-        }
-        while (fread(&NAME[cart_in], sizeof(SP), 1, fp) == 1)
-        {   
-            cart_in++;
-        }
-        fclose(fp);
-        fclose(fp1);
         printf("输入所需要的商品：  ");
         scanf("%s", name);
         for (int i = 0; i < cart_in; i++)//添加进SHOP数组当中去
         {
-            //索引商品和数量的添加
+            //索引商品和数量的添加(包括重复物品)
             if (strcmp(NAME[i].name, name) == 0 && NAME[i].num != 0)
             {
                 printf("已为您找到该商品\n");
@@ -134,27 +193,60 @@ void add_cart()
                 printf("名称\t数量\t价格\n");
                 printf("%s\t%d\t%.2f元", NAME[i].name, NAME[i].num, NAME[i].price);
                 printf("\n");
-                strcpy(SHOP[cart_in_sp].name, name);
-                while (1)
+                //负责重复商品的添加
+                for (int j = 0; j < shuzi; j++)
                 {
-                    int num;
-                    printf("输入您需要的数量：");
-                    scanf("%d", &num);
-                    getchar();
-                    if (num > NAME[i].num)
+                    if (strcmp(SHOP[j].name, name) == 0)
                     {
-                        printf("库存不足，请重新输入\n");
-                        continue;
+                        while(1)
+                        {
+                            int SL = 0;
+                            printf("输入您需要的数量：");
+                            scanf("%d", &SL);
+                            getchar();
+                            if (SL > NAME[i].num)
+                            {
+                                printf("\n库存不足，请重新输入\n");
+                                continue;
+                            }
+                            else
+                            {
+                                SHOP[j].num += SL;
+                                SHOP[j].price = NAME[i].price;
+                                NAME[i].num -= SL;
+                                CT = 1, BL = 1;
+                                printf("\n已为您记录\n");
+                                printf("\n");
+                                break;
+                            }
+                        }
                     }
-                    else
+                }
+                //无相同就正常添加
+                if(!BL)
+                {
+                    strcpy(SHOP[cart_in_sp].name, name);
+                    while (1)
                     {
-                        SHOP[cart_in_sp].num = num;
-                        SHOP[cart_in_sp].price = NAME[i].price;
-                        NAME[i].num -= num;
-                        cart_in_sp++;
-                        CT = true;
-                        printf("已为您记录\n");
-                        break;
+                        int num;
+                        printf("输入您需要的数量：");
+                        scanf("%d", &num);
+                        getchar();
+                        if (num > NAME[i].num)
+                        {
+                            printf("\n库存不足，请重新输入\n");
+                            continue;
+                        }
+                        else
+                        {
+                            SHOP[cart_in_sp].num = num;
+                            SHOP[cart_in_sp].price = NAME[i].price;
+                            NAME[i].num -= num;
+                            cart_in_sp++;
+                            CT = 1;
+                            printf("\n已为您记录\n");
+                            break;
+                        }
                     }
                 }
             }
@@ -202,14 +294,6 @@ void shop_car()
             {
             case 1:
             {
-                FILE* fp1 = fopen("SHOP", "r");
-                if (fp1 == NULL || SHOP[0].num == 0)
-                {
-                    printf("当前无选中物品\n");
-                    printf("0");
-                    break;
-                }
-                fclose(fp1);
                 printf("购物列表显示\n");
                 show_cart();
                 break;
@@ -248,13 +332,12 @@ void price_sum()
     memset(SHOP, '\0', sizeof(SHOP));
     if (PR_SUM == 0)
     {
-        printf("当前购物车中无物品");
+        printf("当前购物车中无物品\n");
         return;
     }
     printf("\n您本次消费了：\t%.2lf元\n", PR_SUM);
+    printf("\n温馨提示：结算后，购物车自动清空\n\n");
     fp1 = fopen("SHOP", "w");
-    NUM = 0;
-    fwrite(SHOP, sizeof(SP), NUM, fp1);
     fclose(fp1);
 }
 //程序功能选择
