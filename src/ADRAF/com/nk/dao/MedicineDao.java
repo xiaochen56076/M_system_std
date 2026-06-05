@@ -59,8 +59,8 @@ public class MedicineDao {
         PreparedStatement ps = null;
         conn = Dao.getConn();
         try {
-            ps = conn.prepareStatement("select encoding, name, adverseReaction, contraindication from ad_medicine where name = ?");
-            ps.setString(1, keyword);
+            ps = conn.prepareStatement("select encoding, name, adverseReaction, contraindication from ad_medicine where name like ?");
+            ps.setString(1, "%" + keyword + "%");
             ResultSet rs = ps.executeQuery();
             List<Medicine> list = new Vector<>();
             while(rs.next()){
@@ -74,6 +74,17 @@ public class MedicineDao {
             return list;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

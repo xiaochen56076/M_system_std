@@ -2,7 +2,7 @@ package ADRAF.com.nk.dao;
 
 
 import ADRAF.com.nk.bean.User;
-import ADRAF.com.nk.tool.SaveUserStateTool;
+import ADRAF.com.nk.tool.UserStateTool;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,40 +13,35 @@ import javax.swing.JOptionPane;
 
 
 public class UserDao {
-    /**
-     * åˆ¤æ–­ç”¨æˆ·åå’Œå¯†ç çš„æ–¹æ³•
-     *
-     * @param user
-     *            å®ä½“ç±»Userçš„å®ä¾‹
-     */
+
     public static boolean userLogin(User user) {
         Connection conn = null;
         try {
             String username = user.getName();
             String pwd = user.getPwd();
-            conn = Dao.getConn(); // è·å¾—æ•°æ®åº“è¿æ¥
-            // åˆ›å»ºPreparedStatementå¯¹è±¡ï¼Œå¹¶ä¼ é€’SQLè¯­å¥
+            conn = Dao.getConn(); // »ñµÃÊı¾İ¿âÁ¬½Ó
+            // ´´½¨PreparedStatement¶ÔÏó£¬²¢´«µİSQLÓï¾ä
             PreparedStatement ps = conn
                     .prepareStatement("select password from ad_user where username=?");
-            ps.setString(1, username); // ä¸ºå‚æ•°èµ‹å€¼
-            ResultSet rs = ps.executeQuery(); // æ‰§è¡ŒSQLè¯­å¥ï¼Œè·å¾—æŸ¥è¯¢ç»“æœé›†
-            if (rs.next() && rs.getRow() > 0) { // æŸ¥è¯¢åˆ°ç”¨æˆ·ä¿¡æ¯
-                String password = rs.getString(1); // è·å¾—å¯†ç 
-                if (password.equals(pwd)) {// å¦‚æœå¯†ç ç›¸åŒ
-                    SaveUserStateTool.setUsername(username);// è®°å½•è´¦å·
-                    SaveUserStateTool.setPassword(pwd);// è®°å½•å¯†ç 
-                    return true; // å¯†ç æ­£ç¡®è¿”å›true
+            ps.setString(1, username); // Îª²ÎÊı¸³Öµ
+            ResultSet rs = ps.executeQuery(); // Ö´ĞĞSQLÓï¾ä£¬»ñµÃ²éÑ¯½á¹û¼¯
+            if (rs.next() && rs.getRow() > 0) { // ²éÑ¯µ½ÓÃ»§ĞÅÏ¢
+                String password = rs.getString(1); // »ñµÃÃÜÂë
+                if (password.equals(pwd)) {// Èç¹ûÃÜÂëÏàÍ¬
+                    UserStateTool.setUsername(username);// ¼ÇÂ¼ÕËºÅ
+                    UserStateTool.setPassword(pwd);// ¼ÇÂ¼ÃÜÂë
+                    return true; // ÃÜÂëÕıÈ··µ»Øtrue
                 } else {
-                    JOptionPane.showMessageDialog(null, "å¯†ç é”™è¯¯ã€‚");
-                    return false; // å¯†ç é”™è¯¯è¿”å›false
+                    JOptionPane.showMessageDialog(null, "ÃÜÂë´íÎó¡£");
+                    return false; // ÃÜÂë´íÎó·µ»Øfalse
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "ç”¨æˆ·åä¸å­˜åœ¨ã€‚");
-                return false; // ç”¨æˆ·ä¸å­˜åœ¨è¿”å›false
+                JOptionPane.showMessageDialog(null, "ÓÃ»§²»´æÔÚ¡£");
+                return false; // ÓÃ»§²»´æÔÚ·µ»Øfalse
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "æ•°æ®åº“å¼‚å¸¸ï¼\n" + ex.getMessage());
-            return false; // æ•°æ®åº“å¼‚å¸¸è¿”å›false
+            JOptionPane.showMessageDialog(null, "Êı¾İ¿âÒì³££¡\n" + ex.getMessage());
+            return false; // Êı¾İ¿âÒì³£·µ»Øfalse
         } finally {
             if (conn != null) {
                 try {
@@ -58,44 +53,39 @@ public class UserDao {
         }
     }
 
-    /**
-     * æ·»åŠ ç”¨æˆ·ä¿¡æ¯çš„æ–¹æ³•
-     *
-     * @param user
-     *            å®ä½“ç±»Userçš„å®ä¾‹
-     */
+
     public static void insertUser(User user) {
         Connection conn = null;
         try {
             String username = user.getName();
             String pwd = user.getPwd();
-            String okPwd = user.getOkpwd();// ç¬¬äºŒæ¬¡è¾“å…¥çš„å¯†ç 
+            String okPwd = user.getOkpwd();// µÚ¶ş´ÎÊäÈëµÄÃÜÂë
             if (username == null || username.trim().equals("") || pwd == null
                     || pwd.trim().equals("") || okPwd == null
-                    || okPwd.trim().equals("")) {// å¦‚æœè´¦å·å¯†ç æœ‰ç©ºçš„
-                JOptionPane.showMessageDialog(null, "ç”¨æˆ·åæˆ–å¯†ç ä¸èƒ½ä¸ºç©ºã€‚");
+                    || okPwd.trim().equals("")) {// Èç¹ûÕËºÅÃÜÂëÓĞ¿ÕµÄ
+                JOptionPane.showMessageDialog(null, "ÓÃ»§Ãû»òÃÜÂë²»ÄÜÎª¿Õ¡£");
                 return;
             }
-            if (!pwd.trim().equals(okPwd.trim())) {// å¦‚æœä¸¤æ¬¡è¾“å…¥çš„å¯†ç ä¸ä¸€è‡´
-                JOptionPane.showMessageDialog(null, "ä¸¤æ¬¡è¾“å…¥çš„å¯†ç ä¸ä¸€è‡´ã€‚");
+            if (!pwd.trim().equals(okPwd.trim())) {// Èç¹ûÁ½´ÎÊäÈëµÄÃÜÂë²»Ò»ÖÂ
+                JOptionPane.showMessageDialog(null, "Á½´ÎÊäÈëµÄÃÜÂë²»Ò»ÖÂ¡£");
                 return;
             }
 
 
-            conn = Dao.getConn(); // è·å¾—æ•°æ®åº“è¿æ¥
-            // åˆ›å»ºPreparedStatementå¯¹è±¡ï¼Œå¹¶ä¼ é€’SQLè¯­å¥
+            conn = Dao.getConn(); // »ñµÃÊı¾İ¿âÁ¬½Ó
+            // ´´½¨PreparedStatement¶ÔÏó£¬²¢´«µİSQLÓï¾ä
             PreparedStatement ps = conn
                     .prepareStatement("insert into ad_user (username,password)  values(?,?)");
-            ps.setString(1, username.trim()); // ä¸ºå‚æ•°èµ‹å€¼
+            ps.setString(1, username.trim()); // Îª²ÎÊı¸³Öµ
             ps.setString(2, pwd.trim());
-            int flag = ps.executeUpdate();// æ‰§è¡Œsql
-            if (flag > 0) {// å¦‚æœè¢«å½±å“è¡Œæ•°å¤§äº0
-                JOptionPane.showMessageDialog(null, "æ·»åŠ æˆåŠŸã€‚");
+            int flag = ps.executeUpdate();// Ö´ĞĞsql
+            if (flag > 0) {// Èç¹û±»Ó°ÏìĞĞÊı´óÓÚ0
+                JOptionPane.showMessageDialog(null, "Ìí¼Ó³É¹¦¡£");
             } else {
-                JOptionPane.showMessageDialog(null, "æ·»åŠ å¤±è´¥ã€‚");
+                JOptionPane.showMessageDialog(null, "Ìí¼ÓÊ§°Ü¡£");
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "ç”¨æˆ·åé‡å¤ï¼Œè¯·æ¢ä¸ªåç§°ï¼");
+            JOptionPane.showMessageDialog(null, "ÓÃ»§ÃûÖØ¸´£¬Çë»»¸öÃû³Æ£¡");
             return;
         } finally {
             try {
@@ -108,48 +98,39 @@ public class UserDao {
         }
     }
 
-    /**
-     * ä¿®æ”¹ç”¨æˆ·å¯†ç çš„æ–¹æ³•
-     *
-     * @param oldPwd
-     *            åŸå¯†ç 
-     * @param newPwd
-     *            æ–°å¯†ç 
-     * @param okPwd
-     *            ç¡®è®¤æ–°å¯†ç 
-     */
+
     public static void updateUser(String oldPwd, String newPwd, String okPwd) {
         try {
             if (!newPwd.trim().equals(okPwd.trim())) {
-                JOptionPane.showMessageDialog(null, "ä¸¤æ¬¡è¾“å…¥çš„å¯†ç ä¸ä¸€è‡´ã€‚");
+                JOptionPane.showMessageDialog(null, "Á½´ÎÊäÈëµÄÃÜÂë²»Ò»ÖÂ¡£");
                 return;
             }
             Connection conn = Dao.getConn();
             PreparedStatement ps = conn
                     .prepareStatement("select password from ad_user where username = ?");
-            ps.setString(1, SaveUserStateTool.getUsername());
+            ps.setString(1, UserStateTool.getUsername());
             ResultSet rs = ps.executeQuery();
             if(rs.next()) {
                 String password = rs.getString(1);
                 if (password.equals(oldPwd)) {
                     PreparedStatement ps1 = conn.prepareStatement("update ad_user set password = ? where username = ?");
                     ps1.setString(1, newPwd.trim());
-                    ps1.setString(2, SaveUserStateTool.getUsername());
+                    ps1.setString(2, UserStateTool.getUsername());
                     int flag1 = ps1.executeUpdate();
                     if (flag1 > 0) {
-                        JOptionPane.showMessageDialog(null, "ä¿®æ”¹æˆåŠŸã€‚");
+                        JOptionPane.showMessageDialog(null, "ĞŞ¸Ä³É¹¦¡£");
                     } else {
-                        JOptionPane.showMessageDialog(null, "ä¿®æ”¹å¤±è´¥ã€‚");
+                        JOptionPane.showMessageDialog(null, "ĞŞ¸ÄÊ§°Ü¡£");
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "åŸå¯†ç ä¸æ­£ç¡®ã€‚");
+                    JOptionPane.showMessageDialog(null, "Ô­ÃÜÂë²»ÕıÈ·¡£");
                     return;
                 }
             }
             ps.close();
             conn.close();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "æ•°æ®åº“å¼‚å¸¸ï¼" + ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Êı¾İ¿âÒì³££¡" + ex.getMessage());
             return;
         }
     }
