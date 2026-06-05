@@ -2,17 +2,15 @@ package ADRAF.com.nk.frame;
 
 import ADRAF.com.nk.bean.Medicine;
 import ADRAF.com.nk.dao.MedicineDao;
+import ADRAF.com.nk.datamodel.Mmodel;
 
 import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLOutput;
 import java.util.List;
-import java.util.Vector;
 
 public class MainFrame_search extends JFrame {
 
@@ -22,7 +20,7 @@ public class MainFrame_search extends JFrame {
     private JPanel search_area;
     private JButton btn_search;
     private JScrollPane scrollPane; //创建滚动区域
-    private DefaultTableModel tableModel; //创建表格数据模型
+    private AbstractTableModel tableModel; //创建表格数据模型
     private JTable resultTable;
 
     public MainFrame_search() throws HeadlessException {
@@ -67,7 +65,7 @@ public class MainFrame_search extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String word = jTextField.getText().trim();
-                tableModel.setColumnCount(0);//清空表格
+
 
 
             }
@@ -76,15 +74,15 @@ public class MainFrame_search extends JFrame {
         search_area.add(btn_search);
 
 
-//        查询结果区域
-        final String[]  headname  = {"国药准字", "名称", "不良反应", "禁忌", "操作"};
-        //创建表格模型（初始行为0）
-        tableModel = new DefaultTableModel(headname, 0){
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 4;
-            }
-        };
+
+
+        this.add(inittable(MedicineDao.getAllmedicine()));
+        this.add(header,BorderLayout.NORTH);
+    }
+
+
+    private JPanel inittable(List<Medicine> word){
+        tableModel = new Mmodel(word);
         //设置宽度
         resultTable = new JTable(tableModel);
         DefaultTableCellRenderer r = new DefaultTableCellRenderer();
@@ -104,43 +102,12 @@ public class MainFrame_search extends JFrame {
         //水平滚动条不显示
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-
-//        渲染按钮，因为默认是无法加入按钮的，所以这里需要加入渲染器和编辑器
-        resultTable.getColumn("操作").setCellRenderer(new TableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                return new JButton("查看详细");
-            }
-        });
-//        resultTable.getColumn("操作").setCellEditor(new DefaultCellEditor());
-
-
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(search_area, BorderLayout.NORTH);
         centerPanel.add(scrollPane, BorderLayout.CENTER);
-
-
-        this.add(centerPanel);
-        this.add(header,BorderLayout.NORTH);
-
-        loadData();
+        return centerPanel;
     }
 
-//    加载数据
-    private void loadData(){
-        tableModel.setRowCount(0);
-        List<Medicine> list = MedicineDao.getAllmedicine();
-        if(list != null){
-            for(Medicine m :list){
-                tableModel.addRow(new Object[]{
-                        m.getId(),
-                        m.getName(),
-                        m.getAdverseReaction(),
-                        m.getContraindication()
-                });
-            }
-        }
-    }
 
 
 
@@ -149,21 +116,6 @@ public class MainFrame_search extends JFrame {
         new MainFrame_search();
     }
 
-    public class MyButtonEditor extends DefaultCellEditor{
-        private JPanel panel;
-
-        public MyButtonEditor(JTextField textField) {
-            super(textField);
-        }
-
-        public MyButtonEditor(JCheckBox checkBox) {
-            super(checkBox);
-        }
-
-        public MyButtonEditor(JComboBox<?> comboBox) {
-            super(comboBox);
-        }
-    }
 
 
 

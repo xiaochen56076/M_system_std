@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ADARF_P.iml" filepath="$PROJECT_DIR$/ADARF_P.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/M_system_std.iml" filepath="$PROJECT_DIR$/.idea/M_system_std.iml" />
     </modules>
   </component>
 </project>
