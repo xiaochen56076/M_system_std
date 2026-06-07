@@ -29,7 +29,7 @@ public class Mmodel extends AbstractTableModel {
     //就哪一个列可以操作的
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 5;
+        return columnIndex == 5 || columnIndex == 6;
     }
 
     //获取表头
@@ -40,10 +40,21 @@ public class Mmodel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Medicine m = mdata.get(rowIndex);//行
-        Object[] data = {m.getId(), m.getName(), m.getAdverseReaction(), m.getContraindication(), ""};
-        return data[columnIndex];
+        Medicine m = mdata.get(rowIndex);
+        switch (columnIndex) {
+            case 0: return m.getId();
+            case 1: return m.getName();
+            case 2: return m.getAdverseReaction();
+            case 3: return m.getContraindication();
+            case 4: return "查看";   // 返回固定字符串，不再是 JButton
+            default: return null;
+        }
 
+    }
+
+
+    public Medicine getMedicinerow(int row){
+        return mdata.get(row);
     }
 
 

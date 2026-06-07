@@ -19,6 +19,11 @@ public class UserDao {
         try {
             String username = user.getName();
             String pwd = user.getPwd();
+            if(username.isEmpty() || pwd.isEmpty()){
+                JOptionPane.showMessageDialog(null, "用户名或密码不能为空");
+                return false;
+            }
+
             conn = Dao.getConn(); // 获得数据库连接
             // 创建PreparedStatement对象，并传递SQL语句
             PreparedStatement ps = conn
@@ -54,39 +59,46 @@ public class UserDao {
     }
 
 
-    public static void insertUser(User user) {
+    public static boolean insertUser(User user, String vcode) {
         Connection conn = null;
         try {
             String username = user.getName();
             String pwd = user.getPwd();
-            String okPwd = user.getOkpwd();// 第二次输入的密码
-            if (username == null || username.trim().equals("") || pwd == null
-                    || pwd.trim().equals("") || okPwd == null
-                    || okPwd.trim().equals("")) {// 如果账号密码有空的
+            String okPwd = user.getOkpwd();
+            String allergy = user.getAllergy();
+            System.out.println(username + "" +  pwd+ "" +okPwd);
+            if (username.isEmpty() || pwd.isEmpty() || okPwd.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "用户名或密码不能为空。");
-                return;
+                return false;
             }
-            if (!pwd.trim().equals(okPwd.trim())) {// 如果两次输入的密码不一致
+            if (!pwd.trim().equals(okPwd.trim())) {
                 JOptionPane.showMessageDialog(null, "两次输入的密码不一致。");
-                return;
+                return false;
             }
-
+            System.out.println(UserStateTool.getvcode());
+            if(!UserStateTool.getvcode().equals(vcode)){
+                JOptionPane.showMessageDialog(null, "验证码错误");
+                return false;
+            }
 
             conn = Dao.getConn(); // 获得数据库连接
             // 创建PreparedStatement对象，并传递SQL语句
             PreparedStatement ps = conn
-                    .prepareStatement("insert into ad_user (username,password)  values(?,?)");
+                    .prepareStatement("insert into ad_user (username,password, allergy)  values(?,?,?)");
             ps.setString(1, username.trim()); // 为参数赋值
             ps.setString(2, pwd.trim());
+            ps.setString(3, allergy.trim());
             int flag = ps.executeUpdate();// 执行sql
             if (flag > 0) {// 如果被影响行数大于0
                 JOptionPane.showMessageDialog(null, "添加成功。");
+                return true;
             } else {
                 JOptionPane.showMessageDialog(null, "添加失败。");
+                return false;
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "用户名重复，请换个名称！");
-            return;
+            return false;
         } finally {
             try {
                 if (conn != null) {

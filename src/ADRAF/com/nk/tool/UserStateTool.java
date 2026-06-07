@@ -5,8 +5,9 @@ package ADRAF.com.nk.tool;
  *
  */
 public class UserStateTool {
-	private static String username = null;// 用户名
-	private static String password = null;// 用户密码
+	private static String username = null;
+	private static String password = null;
+	private static String vcode = null;
 
 	public static void setUsername(String username) {
 		UserStateTool.username = username;
@@ -22,6 +23,14 @@ public class UserStateTool {
 
 	public static String getPassword() {
 		return password;
+	}
+
+	public static void setvcode(String vcode) {
+		UserStateTool.vcode = vcode;
+	}
+
+	public static String getvcode() {
+		return vcode;
 	}
 
 }

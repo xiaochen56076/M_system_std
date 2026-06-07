@@ -7,6 +7,15 @@ public class User {
     private String allergy;
     private String role;
 
+    public User() {
+    }
+
+    public User(String name, String pwd, String okpwd, String allergy) {
+        this.name = name;
+        this.pwd = pwd;
+        this.okpwd = okpwd;
+        this.allergy = allergy;
+    }
 
     public String getName() {
         return name;

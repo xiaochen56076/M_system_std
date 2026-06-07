@@ -86,7 +86,7 @@ public class LoginFrame extends JFrame {
         Btn_temp.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainFrame_Visitor mfs = new MainFrame_Visitor();
+                DisplayFrame_Visitor mfs = new DisplayFrame_Visitor();
                 dispose();
             }
         });
@@ -99,7 +99,6 @@ public class LoginFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 RegisterFrame register = new RegisterFrame();
-                register.setTitle("注册");
                 dispose();
             }
         });
@@ -122,19 +121,11 @@ public class LoginFrame extends JFrame {
     private void userlogin(){
         String name = usertext.getText().trim();
         String password = new String(pwktext.getPassword());
-        if(name.isEmpty()){
-            JOptionPane.showMessageDialog(null, "用户名不能为空");
-            return;
-        }
-        if(password.isEmpty()){
-            JOptionPane.showMessageDialog(null, "密码不能为空");
-            return;
-        }
         User user = new User();
         user.setName(name);
         user.setPwd(password);
         if(UserDao.userLogin(user)){
-            MainFrame_Visitor mf = new MainFrame_Visitor();
+            DisplayFrame_Visitor mf = new DisplayFrame_Visitor();
             dispose();
         }
 

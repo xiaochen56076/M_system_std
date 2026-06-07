@@ -4,7 +4,10 @@ package ADRAF.com.nk.frame;
 // @Time：2026-06-05-13-39
 // @Project：ADARF_P
 
+import ADRAF.com.nk.bean.User;
+import ADRAF.com.nk.dao.UserDao;
 import ADRAF.com.nk.tool.Radom_code_tool;
+import ADRAF.com.nk.tool.UserStateTool;
 import ADRAF.com.nk.tool.font;
 
 import javax.swing.*;
@@ -26,7 +29,7 @@ public class RegisterFrame extends JFrame {
     private JButton Btn_temp;
     private JButton Btn_exit;
     private JLabel okpwdLabel;
-    private JPasswordField okpwktext;
+    private JPasswordField okpwdtext;
     private JLabel alLable;
     private JTextArea altext;
     private JLabel vcodeLable;
@@ -36,6 +39,7 @@ public class RegisterFrame extends JFrame {
     private JLabel codegraph;
     private URL url;
     private JLabel bg;
+    Object[] temp;
 
 
 
@@ -89,10 +93,10 @@ public class RegisterFrame extends JFrame {
         okpwdLabel.setBounds(30, 110, 80, 30);
         this.add(okpwdLabel);
 
-        okpwktext = new JPasswordField();
-        okpwktext.setFont(font.ft);
-        okpwktext.setBounds(100, 110, 180, 30);
-        this.add(okpwktext);
+        okpwdtext = new JPasswordField();
+        okpwdtext.setFont(font.ft);
+        okpwdtext.setBounds(100, 110, 180, 30);
+        this.add(okpwdtext);
 
 
         alLable = new JLabel("过敏史(选填):");
@@ -122,14 +126,19 @@ public class RegisterFrame extends JFrame {
 
 
 
-        ImageIcon img = new ImageIcon((BufferedImage)Radom_code_tool.createImage()[1]);
+        temp =Radom_code_tool.createImage();
+        ImageIcon img = new ImageIcon((BufferedImage)temp[1]);
+        UserStateTool.setvcode((String)temp[0]);
         codegraph = new JLabel(img);
         codegraph.setBounds(280, 155, 100, 30);
         codegraph.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(e.getClickCount() == 1){
-                    codegraph.setIcon((Icon)new ImageIcon((BufferedImage)Radom_code_tool.createImage()[1]));
+                    temp =Radom_code_tool.createImage();
+                    ImageIcon img = new ImageIcon((BufferedImage)temp[1]);
+                    codegraph.setIcon((Icon) img);
+                    UserStateTool.setvcode((String)temp[0]);
                 }
             }
         });
@@ -158,10 +167,10 @@ public class RegisterFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(okpwdbox.isSelected()){
-                    okpwktext.setEchoChar((char)0);
+                    okpwdtext.setEchoChar((char)0);
                 }
                 else{
-                    okpwktext.setEchoChar('*');
+                    okpwdtext.setEchoChar('*');
                 }
             }
         });
@@ -203,7 +212,7 @@ public class RegisterFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 usertext.setText("");
                 pwktext.setText("");
-                okpwktext.setText("");
+                okpwdtext.setText("");
                 vcode.setText("");
                 altext.setText("");
             }
@@ -218,7 +227,11 @@ public class RegisterFrame extends JFrame {
         Btn_temp.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("test");
+                User user = new User(usertext.getText().trim(), new String(pwktext.getPassword()), new String(okpwdtext.getPassword()), altext.getText().trim());
+                if(UserDao.insertUser(user, vcode.getText().trim())){
+                    DisplayFrame_Patient dfv = new DisplayFrame_Patient();
+                    dispose();
+                }
             }
         });
         return Btn_temp;
@@ -237,7 +250,6 @@ public class RegisterFrame extends JFrame {
         });
         return Btn_exit;
     }
-
 
     private void intigraph() {
         //读取图片资源
