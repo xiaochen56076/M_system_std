@@ -9,6 +9,7 @@ import ADRAF.com.nk.bean.Medicine;
 import ADRAF.com.nk.dao.MedicineDao;
 import ADRAF.com.nk.datamodel.Mmodel;
 import ADRAF.com.nk.tool.MmDialog;
+import ADRAF.com.nk.tool.WindowTool;
 import ADRAF.com.nk.tool.font;
 
 import javax.swing.*;
@@ -78,6 +79,27 @@ public class DisplayFrame_Visitor extends JFrame {
         btn_panel.setOpaque(false);//禁用背景绘制
         btn_up = new JButton("登录");
         btn_in = new JButton("注册");
+
+        btn_up.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LoginFrame_Sec lf = new LoginFrame_Sec();
+                WindowTool.setJF(lf);
+            }
+        });
+
+
+        DisplayFrame_Visitor temp = this;
+        btn_in.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RegisterFrame rf = new RegisterFrame();
+                WindowTool.setJF(temp);
+                dispose();
+            }
+        });
+
+
         btn_panel.add(btn_up);
         btn_panel.add(btn_in);
 
@@ -89,7 +111,6 @@ public class DisplayFrame_Visitor extends JFrame {
         this.add(initlrpanel());
         this.add(header, BorderLayout.NORTH);
     }
-
 
     //左右排版部分
     private JSplitPane initlrpanel() {
@@ -211,9 +232,6 @@ public class DisplayFrame_Visitor extends JFrame {
         resultTable.getColumnModel().getColumn(2).setPreferredWidth(250);
         resultTable.getColumnModel().getColumn(3).setPreferredWidth(200);
         resultTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
-
-
-
     }
 
     //自查部分(AI)
@@ -321,12 +339,8 @@ public class DisplayFrame_Visitor extends JFrame {
             setOpaque(true);
         }
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int col) {
-            setText(value == null ? "" : value.toString());
-            if("".equals(value)){
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
                 setText("查看详情");
-            }
             return this;
         }
     }

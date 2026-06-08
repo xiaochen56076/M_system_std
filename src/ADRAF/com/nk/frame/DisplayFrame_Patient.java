@@ -5,9 +5,14 @@ import ADRAF.com.nk.bean.Medicine;
 import ADRAF.com.nk.dao.MedicineDao;
 import ADRAF.com.nk.datamodel.Mmodel;
 import ADRAF.com.nk.tool.MmDialog;
+import ADRAF.com.nk.tool.UserStateTool;
 import ADRAF.com.nk.tool.font;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -42,6 +47,9 @@ public class DisplayFrame_Patient extends JFrame {
     private JTextField daysField;
     private JTextArea symptomArea;
     private JButton btnSubmit;
+    private JTextField mSearch;
+    private DefaultListModel<String> mModel;
+    private JList<String> mList;
 
     private JTable recordTable;
     private JScrollPane recordScrollPane;
@@ -66,14 +74,14 @@ public class DisplayFrame_Patient extends JFrame {
         header.setPreferredSize(new Dimension(0, 40));
         header.setLayout(new BorderLayout());
 
-        title = new JLabel("患者工作台");
+        title = new JLabel("药物不良反应查询反馈平台");
         title.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
         title.setFont(new Font("null", Font.BOLD, 28));
         title.setForeground(Color.WHITE);
 
         btn_panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btn_panel.setOpaque(false);
-        JLabel wl = new JLabel("欢迎，张三");
+        JLabel wl = new JLabel("欢迎，" + UserStateTool.getUsername());
         wl.setFont(new Font("null", Font.PLAIN, 16));
         wl.setForeground(Color.WHITE);
         wl.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
@@ -224,7 +232,7 @@ public class DisplayFrame_Patient extends JFrame {
         resultTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
     }
 
-    // 按钮渲染（完全沿用 Visitor 风格）
+
     public class BtnRenderer extends JButton implements TableCellRenderer {
         public BtnRenderer() {
             setOpaque(true);
@@ -240,7 +248,7 @@ public class DisplayFrame_Patient extends JFrame {
         }
     }
 
-    // ===================== AI自查（沿用 Visitor 的 initaichat 布局） =====================
+
     private JPanel initaichat() {
         JPanel query = new JPanel();
         query.setLayout(null);
@@ -337,12 +345,12 @@ public class DisplayFrame_Patient extends JFrame {
         return query;
     }
 
-    // ===================== 不良反应上报 =====================
+
     private JPanel initReportPanel() {
         JPanel panel = new JPanel(null);
         panel.setBackground(Color.WHITE);
 
-        JLabel titleLabel = new JLabel("不良反应上报");
+        JLabel titleLabel = new JLabel("不良反应上报 ");
         titleLabel.setBounds(30, 20, 200, 30);
         titleLabel.setFont(new Font("null", Font.BOLD, 22));
 
@@ -350,13 +358,71 @@ public class DisplayFrame_Patient extends JFrame {
         drugLabel.setBounds(30, 70, 100, 30);
         drugLabel.setFont(font.ft);
 
-        drugCombo = new JComboBox<>();
-        drugCombo.setBounds(130, 70, 200, 30);
-        drugCombo.setFont(font.ft);
-        List<Medicine> allMeds = MedicineDao.getAllmedicine();
-        for (Medicine m : allMeds) {
-            drugCombo.addItem(m.getName());
-        }
+        //搜索选择
+        mSearch = new JTextField(20);
+        mSearch.setBounds(130, 70, 200, 30);
+        mSearch.setFont(font.ft);
+
+
+        mModel = new DefaultListModel<>();
+        mList = new JList<>(mModel);
+        JScrollPane mJsp = new JScrollPane(mList);
+        mJsp.setBounds(130, 100, 200, 150);
+        mJsp.setVisible(false);
+
+//        JLabel mSelected = new JLabel("五");
+//        mSelected.setBounds(340, 70, 250, 30);
+
+        mSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                wordList();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                wordList();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                wordList();
+            }
+
+
+            public void  wordList(){
+                String word = mSearch.getText().trim();
+                if(word.isEmpty()){
+                    mJsp.setVisible(false);
+                    return;
+                }
+                mModel.clear();
+                List<Medicine> result = MedicineDao.seacrchMedicine(word);
+                if(result.isEmpty()){
+                    mModel.addElement("暂无匹配药品");
+                }
+                else{
+                    for(Medicine m : result){
+                        mModel.addElement(m.getName());
+                    }
+                }
+                mJsp.setVisible(true);
+            }
+        });
+
+
+        mList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                String selected =  mList.getSelectedValue();
+                if(selected != null && !selected.equals("暂无匹配药品")) {
+                    mSearch.setText(selected);
+                    mJsp.setVisible(false);
+                }
+            }
+        });
+
+
 
         JLabel daysLabel = new JLabel("用药时长：");
         daysLabel.setBounds(360, 70, 100, 30);
@@ -409,7 +475,8 @@ public class DisplayFrame_Patient extends JFrame {
 
         panel.add(titleLabel);
         panel.add(drugLabel);
-        panel.add(drugCombo);
+        panel.add(mSearch);
+        panel.add(mJsp);
         panel.add(daysLabel);
         panel.add(daysField);
         panel.add(daysUnit);
@@ -420,7 +487,7 @@ public class DisplayFrame_Patient extends JFrame {
         return panel;
     }
 
-    // ===================== 我的记录 =====================
+
     private JPanel initRecordPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);

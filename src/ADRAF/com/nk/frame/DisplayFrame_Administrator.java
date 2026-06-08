@@ -75,7 +75,7 @@ public class DisplayFrame_Administrator extends JFrame {
         header.setPreferredSize(new Dimension(0, 40));
         header.setLayout(new BorderLayout());
 
-        title = new JLabel("管理员后台");
+        title = new JLabel("药物不良反应查询反馈平台");
         title.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
         title.setFont(new Font("null", Font.BOLD, 28));
         title.setForeground(Color.WHITE);

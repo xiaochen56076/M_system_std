@@ -8,6 +8,7 @@ import ADRAF.com.nk.bean.User;
 import ADRAF.com.nk.dao.UserDao;
 import ADRAF.com.nk.tool.Radom_code_tool;
 import ADRAF.com.nk.tool.UserStateTool;
+import ADRAF.com.nk.tool.WindowTool;
 import ADRAF.com.nk.tool.font;
 
 import javax.swing.*;
@@ -160,8 +161,8 @@ public class RegisterFrame extends JFrame {
         okpwdbox.setBorderPainted(false);
         okpwdbox.setContentAreaFilled(false);
         okpwdbox.setFocusPainted(false);
-        okpwdbox.setIcon(new ImageIcon(getClass().getResource("/ADRAF/images/close.png")));
-        okpwdbox.setSelectedIcon(new ImageIcon(getClass().getResource("/ADRAF/images/open.png")));
+        okpwdbox.setIcon(new ImageIcon(getClass().getResource("/ADRAF/com/nk/images/close.png")));
+        okpwdbox.setSelectedIcon(new ImageIcon(getClass().getResource("/ADRAF/com/nk/images/open.png")));
         okpwdbox.setOpaque(false);
         okpwdbox.addActionListener(new ActionListener() {
             @Override
@@ -184,8 +185,8 @@ public class RegisterFrame extends JFrame {
         pwdbox.setBorderPainted(false);
         pwdbox.setContentAreaFilled(false);
         pwdbox.setFocusPainted(false);
-        pwdbox.setIcon(new ImageIcon(getClass().getResource("/ADRAF/images/close.png")));
-        pwdbox.setSelectedIcon(new ImageIcon(getClass().getResource("/ADRAF/images/open.png")));
+        pwdbox.setIcon(new ImageIcon(getClass().getResource("/ADRAF/com/nk/images/close.png")));
+        pwdbox.setSelectedIcon(new ImageIcon(getClass().getResource("/ADRAF/com/nk/images/open.png")));
         pwdbox.setOpaque(false);
         pwdbox.addActionListener(new ActionListener() {
             @Override
@@ -244,8 +245,19 @@ public class RegisterFrame extends JFrame {
         Btn_exit.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LoginFrame lf = new LoginFrame();
-                dispose();
+                System.out.println(WindowTool.getJF());
+                if(WindowTool.getJF() instanceof LoginFrame_Fir){
+                    new LoginFrame_Fir();
+                    dispose();
+                }
+                else if ( WindowTool.getJF() instanceof LoginFrame_Sec){
+                    new LoginFrame_Sec();
+                    dispose();
+                }
+                else if(WindowTool.getJF() instanceof DisplayFrame_Visitor){
+                    new DisplayFrame_Visitor();
+                    dispose();
+                }
             }
         });
         return Btn_exit;
@@ -253,7 +265,7 @@ public class RegisterFrame extends JFrame {
 
     private void intigraph() {
         //读取图片资源
-        url = getClass().getResource("/ADRAF/images/bg_up.png");
+        url = getClass().getResource("/ADRAF/com/nk/images/bg_up.png");
         //对象中取出原始图片对象,进行设置参数
         Image img = new ImageIcon(url).getImage().getScaledInstance(550, 300, Image.SCALE_SMOOTH);
         bg = new JLabel(new ImageIcon(img));

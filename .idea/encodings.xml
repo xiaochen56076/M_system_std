@@ -2,8 +2,10 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/aimodel/AiChat.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/demo/DisplayFrame_Patient1.java" charset="GB2312" />
     <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/frame/DisplayFrame_Visitor.java" charset="GB2312" />
-    <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/frame/LoginFrame.java" charset="GB2312" />
+    <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/frame/LoginFrame_Fir.java" charset="GB2312" />
+    <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/frame/RegisterFrame.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/tool/UserStateTool.java" charset="GB2312" />
     <file url="file://$PROJECT_DIR$/src/lib" charset="GB2312" />
     <file url="PROJECT" charset="GBK" />

@@ -6,17 +6,17 @@ package ADRAF.com.nk.frame;
 
 import ADRAF.com.nk.bean.User;
 import ADRAF.com.nk.dao.UserDao;
+import ADRAF.com.nk.tool.WindowTool;
 import ADRAF.com.nk.tool.font;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 
 
-public class LoginFrame extends JFrame {
-
-
+public class LoginFrame_Fir extends JFrame {
 
     private JLabel userLabel;
     private JLabel pwdLabel;
@@ -29,7 +29,7 @@ public class LoginFrame extends JFrame {
     private JLabel bg;
 
     public static void main(String[] args) {
-        LoginFrame thisclass = new LoginFrame();
+        LoginFrame_Fir thisclass = new LoginFrame_Fir();
     }
 
     //	初始化一些必要设置
@@ -69,7 +69,7 @@ public class LoginFrame extends JFrame {
 
 
         Btn_login = new JButton("登 录");
-        Btn_login.setBounds(260, 260, 70, 32);
+        Btn_login.setBounds(260, 260, 85, 35);
 
 
         Btn_login.addActionListener(new AbstractAction() {
@@ -80,25 +80,27 @@ public class LoginFrame extends JFrame {
         });
 
         Btn_temp = new JButton("访客登录");
-        Btn_temp.setBounds(440, 260, 90, 32);
+        Btn_temp.setBounds(440, 260, 90, 35);
 
 
-        Btn_temp.addActionListener(new AbstractAction() {
+        Btn_temp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                DisplayFrame_Visitor mfs = new DisplayFrame_Visitor();
+                new DisplayFrame_Visitor();
                 dispose();
             }
         });
 
 
         Btn_sign = new JButton("注 册");
-        Btn_sign.setBounds(350, 260, 70, 32);
+        Btn_sign.setBounds(350, 260, 85, 35);
 
-        Btn_sign.addActionListener(new AbstractAction() {
+        JFrame temp = this;
+        Btn_sign.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                RegisterFrame register = new RegisterFrame();
+                new RegisterFrame();
+                WindowTool.setJF(temp);
                 dispose();
             }
         });
@@ -109,7 +111,7 @@ public class LoginFrame extends JFrame {
     }
 
     private void initigraph() {
-        url = getClass().getResource("/ADRAF/images/bg_in.png");
+        url = getClass().getResource("/ADRAF/com/nk/images/bg_in.png");
         if (url != null) {
             Image img = new ImageIcon(url).getImage().getScaledInstance(550, 300, Image.SCALE_SMOOTH);
             bg = new JLabel(new ImageIcon(img));
@@ -125,7 +127,7 @@ public class LoginFrame extends JFrame {
         user.setName(name);
         user.setPwd(password);
         if(UserDao.userLogin(user)){
-            DisplayFrame_Visitor mf = new DisplayFrame_Visitor();
+            DisplayFrame_Patient mf = new DisplayFrame_Patient();
             dispose();
         }
 
@@ -133,9 +135,7 @@ public class LoginFrame extends JFrame {
     }
 
 
-
-
-    public LoginFrame() throws HeadlessException {
+    public LoginFrame_Fir() throws HeadlessException {
         init();
         inittext();
         initigraph();

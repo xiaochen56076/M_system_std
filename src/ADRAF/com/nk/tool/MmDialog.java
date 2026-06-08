@@ -63,8 +63,10 @@ public class MmDialog extends JDialog {
                 dispose();
             }
         });
+        setModal(true);
+        setAlwaysOnTop(true);
+        setResizable(false);
         add(closeBtn);
-
         setVisible(true);
     }
 }
