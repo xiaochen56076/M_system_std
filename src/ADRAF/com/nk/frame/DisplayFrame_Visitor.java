@@ -163,6 +163,10 @@ public class DisplayFrame_Visitor extends JFrame {
         return splitPane;
     }
 
+
+
+
+
     //搜索框部分
     private void initsearch() {
         search_area = new JPanel();
@@ -217,10 +221,10 @@ public class DisplayFrame_Visitor extends JFrame {
         //水平滚动条不显示
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(search_area, BorderLayout.NORTH);
-        centerPanel.add(scrollPane, BorderLayout.CENTER);
-        return centerPanel;
+        JPanel mPanel = new JPanel(new BorderLayout());
+        mPanel.add(search_area, BorderLayout.NORTH);
+        mPanel.add(scrollPane, BorderLayout.CENTER);
+        return mPanel;
     }
 
     private void table() {
@@ -233,6 +237,8 @@ public class DisplayFrame_Visitor extends JFrame {
         resultTable.getColumnModel().getColumn(3).setPreferredWidth(200);
         resultTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
     }
+
+
 
     //自查部分(AI)
     private JPanel initaichat() {

@@ -1,21 +1,25 @@
 package ADRAF.com.nk.datamodel;
 
-import ADRAF.com.nk.bean.Medicine;
+// @Author：nskdf
+// @Time：2026-06-08-20-14
+// @Project：ADARF_P
+
+import ADRAF.com.nk.bean.Records;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
-public class Mmodel extends AbstractTableModel {
-    private String[] header = {"药品", "症状", "时间", "状态", "操作"};
-    private List<Medicine> mdata;
+public class Rmodel extends AbstractTableModel {
+    private String[] header = {"药品名称", "不良反应", "用药时间", "记录时间", "操作"};
+    private List<Records> rdata;
 
-    public Mmodel(List<Medicine> list) {
-        this.mdata = list;
+    public Rmodel(List<Records> list) {
+        this.rdata = list;
     }
 
     @Override
     public int getRowCount() {
-        return mdata.size();
+        return rdata.size();
     }
 
     @Override
@@ -35,18 +39,18 @@ public class Mmodel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Medicine m = mdata.get(rowIndex);
+        Records m = rdata.get(rowIndex);
         switch (columnIndex) {
-            case 0: return m.getId();
-            case 1: return m.getName();
-            case 2: return m.getAdverseReaction();
-            case 3: return m.getContraindication();
+            case 0: return m.getMeName();
+            case 1: return m.getSymptom();
+            case 2: return m.getDays();
+            case 3: return m.getReportTime();
             case 4: return "查看";
             default: return null;
         }
     }
 
-    public Medicine getMedicinerow(int row) {
-        return mdata.get(row);
+    public Records getRecordrow(int row) {
+        return rdata.get(row);
     }
 }

@@ -2,9 +2,13 @@ package ADRAF.com.nk.frame;
 
 import ADRAF.com.nk.aimodel.AiChat;
 import ADRAF.com.nk.bean.Medicine;
+import ADRAF.com.nk.bean.Records;
 import ADRAF.com.nk.dao.MedicineDao;
+import ADRAF.com.nk.dao.RecordDao;
 import ADRAF.com.nk.datamodel.Mmodel;
+import ADRAF.com.nk.datamodel.Rmodel;
 import ADRAF.com.nk.tool.MmDialog;
+import ADRAF.com.nk.tool.RecDialog;
 import ADRAF.com.nk.tool.UserStateTool;
 import ADRAF.com.nk.tool.font;
 
@@ -44,15 +48,15 @@ public class DisplayFrame_Patient extends JFrame {
     private JButton btn_reset;
 
     private JComboBox<String> drugCombo;
-    private JTextField daysField;
-    private JTextArea symptomArea;
+    private JTextField daystext;
+    private JTextArea symptomtext;
     private JButton btnSubmit;
     private JTextField mSearch;
     private DefaultListModel<String> mModel;
     private JList<String> mList;
 
     private JTable recordTable;
-    private JScrollPane recordScrollPane;
+    private JScrollPane recordjsp;
 
     public DisplayFrame_Patient() {
         init();
@@ -117,19 +121,25 @@ public class DisplayFrame_Patient extends JFrame {
         cardLayout = new CardLayout();
         cardpaanel = new JPanel(cardLayout);
 
+        //查询药品
         JPanel querypage = new JPanel();
         querypage.setBackground(Color.white);
         querypage.setLayout(new BorderLayout());
         querypage.add(inittable(MedicineDao.getAllmedicine()));
-
+        //上报
         JPanel reportpage = initReportPanel();
-
+        reportpage.setBackground(Color.WHITE);
+        reportpage.setLayout(new BorderLayout());
+        //ai咨询
         JPanel aipage = new JPanel();
-        aipage.setBackground(Color.white);
         aipage.setLayout(new BorderLayout());
         aipage.add(initaichat());
+        //记录
+        JPanel recordpage = new JPanel();
+        recordpage.setLayout(new BorderLayout());
+        recordpage.add(initrecordpanel(RecordDao.getMyRecords()));
+        recordpage.setBackground(Color.WHITE);
 
-        JPanel recordpage = initRecordPanel();
 
         cardpaanel.add(querypage, "query");
         cardpaanel.add(reportpage, "report");
@@ -147,10 +157,10 @@ public class DisplayFrame_Patient extends JFrame {
                 cardLayout.show(cardpaanel, "query");
             }
         });
-        btn2.addActionListener(new ActionListener() {
-            @Override
+        btn2.addActionListener(new ActionListener() {@Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardpaanel, "report");
+                refreshRecordTable(RecordDao.getMyRecords());
             }
         });
         btn3.addActionListener(new ActionListener() {
@@ -193,7 +203,7 @@ public class DisplayFrame_Patient extends JFrame {
         resultTable.setModel(new Mmodel(list));
         table();
     }
-
+    //初始化药物表格
     private JPanel inittable(List<Medicine> word) {
         tableModel = new Mmodel(word);
         resultTable = new JTable(tableModel);
@@ -220,7 +230,7 @@ public class DisplayFrame_Patient extends JFrame {
         centerPanel.add(scrollPane, BorderLayout.CENTER);
         return centerPanel;
     }
-
+    //设置药品表格
     private void table() {
         resultTable.setRowHeight(35);
         resultTable.getTableHeader().setReorderingAllowed(false);
@@ -251,6 +261,7 @@ public class DisplayFrame_Patient extends JFrame {
 
     private JPanel initaichat() {
         JPanel query = new JPanel();
+        query.setBackground(Color.WHITE);
         query.setLayout(null);
 
         JLabel labelTip = new JLabel("请描述你的症状，AI将分析可能相关的药物不良反应：");
@@ -285,10 +296,7 @@ public class DisplayFrame_Patient extends JFrame {
         aijsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         aijsp.setBounds(30, 215, 800, 400);
 
-        JLabel disclaimer = new JLabel("[!] 仅供参考，不能替代医生诊断");
-        disclaimer.setBounds(30, 620, 300, 25);
-        disclaimer.setFont(font.ft);
-        disclaimer.setForeground(Color.RED);
+
 
         btn_reset.addActionListener(new ActionListener() {
             @Override
@@ -341,18 +349,17 @@ public class DisplayFrame_Patient extends JFrame {
         query.add(btn_reset);
         query.add(labelResult);
         query.add(aijsp);
-        query.add(disclaimer);
         return query;
     }
 
-
+    //上报
     private JPanel initReportPanel() {
         JPanel panel = new JPanel(null);
         panel.setBackground(Color.WHITE);
 
         JLabel titleLabel = new JLabel("不良反应上报 ");
         titleLabel.setBounds(30, 20, 200, 30);
-        titleLabel.setFont(new Font("null", Font.BOLD, 22));
+        titleLabel.setFont(font.ft);
 
         JLabel drugLabel = new JLabel("选择药品：");
         drugLabel.setBounds(30, 70, 100, 30);
@@ -369,9 +376,6 @@ public class DisplayFrame_Patient extends JFrame {
         JScrollPane mJsp = new JScrollPane(mList);
         mJsp.setBounds(130, 100, 200, 150);
         mJsp.setVisible(false);
-
-//        JLabel mSelected = new JLabel("五");
-//        mSelected.setBounds(340, 70, 250, 30);
 
         mSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -410,7 +414,6 @@ public class DisplayFrame_Patient extends JFrame {
             }
         });
 
-
         mList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -423,14 +426,13 @@ public class DisplayFrame_Patient extends JFrame {
         });
 
 
-
         JLabel daysLabel = new JLabel("用药时长：");
         daysLabel.setBounds(360, 70, 100, 30);
         daysLabel.setFont(font.ft);
 
-        daysField = new JTextField(10);
-        daysField.setBounds(450, 70, 80, 30);
-        daysField.setFont(font.ft);
+        daystext = new JTextField(10);
+        daystext.setBounds(450, 70, 80, 30);
+        daystext.setFont(font.ft);
 
         JLabel daysUnit = new JLabel("天");
         daysUnit.setBounds(535, 70, 30, 30);
@@ -440,36 +442,35 @@ public class DisplayFrame_Patient extends JFrame {
         symptomLabel.setBounds(30, 120, 100, 30);
         symptomLabel.setFont(font.ft);
 
-        symptomArea = new JTextArea();
-        symptomArea.setBounds(30, 155, 600, 120);
-        symptomArea.setFont(font.ft);
-        symptomArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        symptomArea.setLineWrap(true);
-        symptomArea.setWrapStyleWord(true);
+        symptomtext = new JTextArea();
+        symptomtext.setBounds(30, 155, 600, 120);
+        symptomtext.setFont(font.ft);
+        symptomtext.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        symptomtext.setLineWrap(true);
+        symptomtext.setWrapStyleWord(true);
 
         btnSubmit = new JButton("提交反馈");
         btnSubmit.setBounds(280, 300, 120, 40);
         btnSubmit.setFont(font.ft);
-        btnSubmit.setBackground(new Color(60, 179, 113));
-        btnSubmit.setForeground(Color.WHITE);
 
         btnSubmit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String drug = (String) drugCombo.getSelectedItem();
-                String days = daysField.getText().trim();
-                String symptom = symptomArea.getText().trim();
+                String drug = mSearch.getText().trim();
+                String days = daystext.getText().trim();
+                String symptom = symptomtext.getText().trim();
 
-                if (drug == null || days.isEmpty() || symptom.isEmpty()) {
+                if (drug.isEmpty() || days.isEmpty() || symptom.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "请完整填写信息");
                     return;
                 }
 
-                JOptionPane.showMessageDialog(null,
-                        "提交成功，可在'我的记录'查看进度",
-                        "提交成功", JOptionPane.INFORMATION_MESSAGE);
-                daysField.setText("");
-                symptomArea.setText("");
+                Records r = new Records(drug, symptom, days);
+                RecordDao.insertMyrecord(r);
+
+                JOptionPane.showMessageDialog(null, "提交成功，可在'我的记录'查看进度", "提交成功", JOptionPane.INFORMATION_MESSAGE);
+                daystext.setText("");
+                symptomtext.setText("");
             }
         });
 
@@ -478,48 +479,30 @@ public class DisplayFrame_Patient extends JFrame {
         panel.add(mSearch);
         panel.add(mJsp);
         panel.add(daysLabel);
-        panel.add(daysField);
+        panel.add(daystext);
         panel.add(daysUnit);
         panel.add(symptomLabel);
-        panel.add(symptomArea);
+        panel.add(symptomtext);
         panel.add(btnSubmit);
 
         return panel;
     }
 
-
-    private JPanel initRecordPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+    private void refreshRecordTable(List<Records> list) {
+        recordTable.setModel(new Rmodel(list));
+        recordTable();
+    }
+    //初始化记录
+    private JPanel initrecordpanel(List<Records> word) {
 
         JLabel titleLabel = new JLabel("我的记录");
         titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
-        titleLabel.setFont(new Font("null", Font.BOLD, 22));
-        panel.add(titleLabel, BorderLayout.NORTH);
+        titleLabel.setFont(font.ft);
 
-        String[] columnNames = {"药品", "症状", "时间", "状态", "操作"};
-        String[][] data = {
-                {"阿莫西林", "皮疹", "01-15", "已通过", "查看详情"},
-                {"头孢拉定", "腹泻", "01-16", "待审核", "查看详情"},
-                {"布洛芬", "胃痛", "01-20", "已驳回", "查看详情"}
-        };
 
-        recordTable = new JTable(data, columnNames) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+        recordTable = new JTable(new Rmodel(word));
+        recordTable();
 
-        recordTable.setRowHeight(35);
-        recordTable.getTableHeader().setReorderingAllowed(false);
-        recordTable.getTableHeader().setResizingAllowed(false);
-        recordTable.getColumnModel().getColumn(0).setPreferredWidth(120);
-        recordTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        recordTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-        recordTable.getColumnModel().getColumn(3).setPreferredWidth(100);
-        recordTable.getColumnModel().getColumn(4).setPreferredWidth(100);
-        recordTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
 
         recordTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -527,77 +510,32 @@ public class DisplayFrame_Patient extends JFrame {
                 int col = recordTable.columnAtPoint(e.getPoint());
                 int row = recordTable.rowAtPoint(e.getPoint());
                 if (col == 4) {
-                    showRecordDetail(row);
+                    Records r = ((Rmodel)recordTable.getModel()).getRecordrow(row);
+                    new RecDialog(r);
                 }
             }
         });
 
-        recordScrollPane = new JScrollPane(recordTable);
-        recordScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        recordScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        recordjsp = new JScrollPane(recordTable);
+        recordjsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        recordjsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        panel.add(recordScrollPane, BorderLayout.CENTER);
-        return panel;
+        JPanel rpanel = new JPanel(new BorderLayout());
+        rpanel.setBackground(Color.WHITE);
+        rpanel.add(titleLabel, BorderLayout.NORTH);
+        rpanel.add(recordjsp, BorderLayout.CENTER);
+        return rpanel;
     }
-
-    private void showRecordDetail(int row) {
-        if (row < 0) return;
-        JDialog dialog = new JDialog(this, "反馈详情", true);
-        dialog.setSize(400, 300);
-        dialog.setLocationRelativeTo(this);
-
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 10, 5, 10);
-        gbc.gridx = 0; gbc.gridy = 0;
-
-        String drug = (String) recordTable.getValueAt(row, 0);
-        String symptom = (String) recordTable.getValueAt(row, 1);
-        String time = (String) recordTable.getValueAt(row, 2);
-        String status = (String) recordTable.getValueAt(row, 3);
-
-        panel.add(new JLabel("药品："), gbc); gbc.gridx = 1;
-        panel.add(new JLabel(drug), gbc);
-        gbc.gridx = 0; gbc.gridy = 1; panel.add(new JLabel("症状："), gbc); gbc.gridx = 1;
-        panel.add(new JLabel(symptom), gbc);
-        gbc.gridx = 0; gbc.gridy = 2; panel.add(new JLabel("时间："), gbc); gbc.gridx = 1;
-        panel.add(new JLabel(time), gbc);
-        gbc.gridx = 0; gbc.gridy = 3; panel.add(new JLabel("状态："), gbc); gbc.gridx = 1;
-        JLabel statusLabel = new JLabel(status);
-        if ("已通过".equals(status)) {
-            statusLabel.setForeground(new Color(60, 179, 113));
-        } else if ("待审核".equals(status)) {
-            statusLabel.setForeground(new Color(218, 165, 32));
-        } else {
-            statusLabel.setForeground(Color.RED);
-        }
-        panel.add(statusLabel, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
-        panel.add(new JLabel("审核意见："), gbc); gbc.gridy = 5;
-
-        JTextArea opinionArea = new JTextArea("暂无审核意见");
-        if ("已通过".equals(status)) {
-            opinionArea.setText("审核通过，无严重不良反应，建议继续观察。");
-        } else if ("已驳回".equals(status)) {
-            opinionArea.setText("该症状与药物关联性较低，建议进一步检查。");
-        }
-        opinionArea.setEditable(false);
-        opinionArea.setLineWrap(true);
-        opinionArea.setWrapStyleWord(true);
-        opinionArea.setBackground(new Color(245, 245, 245));
-        JScrollPane osp = new JScrollPane(opinionArea);
-        osp.setPreferredSize(new Dimension(300, 80));
-        panel.add(osp, gbc);
-
-        gbc.gridy = 6; gbc.anchor = GridBagConstraints.CENTER;
-        JButton btnClose = new JButton("关闭");
-        btnClose.addActionListener(ev -> dialog.dispose());
-        panel.add(btnClose, gbc);
-
-        dialog.add(panel);
-        dialog.setVisible(true);
+    //设置记录表格
+    private void recordTable() {
+        recordTable.setRowHeight(35);
+        recordTable.getTableHeader().setReorderingAllowed(false);
+        recordTable.getTableHeader().setResizingAllowed(false);
+        recordTable.getColumnModel().getColumn(0).setPreferredWidth(120);
+        recordTable.getColumnModel().getColumn(1).setPreferredWidth(250);
+        recordTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        recordTable.getColumnModel().getColumn(3).setPreferredWidth(80);
+        recordTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
     }
 
     public static void main(String[] args) {
