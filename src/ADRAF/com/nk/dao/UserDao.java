@@ -27,14 +27,16 @@ public class UserDao {
             conn = Dao.getConn(); // 获得数据库连接
             // 创建PreparedStatement对象，并传递SQL语句
             PreparedStatement ps = conn
-                    .prepareStatement("select password from ad_user where username=?");
+                    .prepareStatement("select password, role from ad_user where username=?");
             ps.setString(1, username); // 为参数赋值
             ResultSet rs = ps.executeQuery(); // 执行SQL语句，获得查询结果集
             if (rs.next() && rs.getRow() > 0) { // 查询到用户信息
                 String password = rs.getString(1); // 获得密码
+                int right = rs.getInt(2);//获取权限
                 if (password.equals(pwd)) {// 如果密码相同
                     UserStateTool.setUsername(username);// 记录账号
                     UserStateTool.setPassword(pwd);// 记录密码
+                    UserStateTool.setRight(right);
                     return true; // 密码正确返回true
                 } else {
                     JOptionPane.showMessageDialog(null, "密码错误。");
@@ -84,12 +86,13 @@ public class UserDao {
             conn = Dao.getConn(); // 获得数据库连接
             // 创建PreparedStatement对象，并传递SQL语句
             PreparedStatement ps = conn
-                    .prepareStatement("insert into ad_user (username,password, allergy)  values(?,?,?)");
+                    .prepareStatement("insert into ad_user (username,password, allergy, role)  values(?,?,?, 1)");
             ps.setString(1, username.trim()); // 为参数赋值
             ps.setString(2, pwd.trim());
             ps.setString(3, allergy.trim());
             int flag = ps.executeUpdate();// 执行sql
             if (flag > 0) {// 如果被影响行数大于0
+                UserStateTool.setRight(1);
                 JOptionPane.showMessageDialog(null, "添加成功。");
                 return true;
             } else {

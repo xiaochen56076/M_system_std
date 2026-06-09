@@ -7,6 +7,7 @@ package ADRAF.com.nk.dao;
 import ADRAF.com.nk.bean.Records;
 import ADRAF.com.nk.tool.UserStateTool;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -47,15 +48,14 @@ public class RecordDao {
         return list;
     }
 
-    public static List<Records> getPatientRecords() {
+    public static List<Records> getnoPatientRecords() {
         List<Records> list = new ArrayList<>();
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = Dao.getConn();
             ps = conn.prepareStatement(
-                    "SELECT drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record ORDER BY report_time DESC");
-            ps.setString(1, UserStateTool.getUsername());
+                    "SELECT drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record where status = '´ýÉóºË' ORDER BY report_time DESC");
             ResultSet rs = ps.executeQuery();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             while (rs.next()) {
@@ -78,6 +78,34 @@ public class RecordDao {
     }
 
 
+    public static List<Records> getyesPatientRecords() {
+        List<Records> list = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = Dao.getConn();
+            ps = conn.prepareStatement(
+                    "SELECT drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record where status = 'ÒÑÉóºË' ORDER BY report_time DESC");
+            ResultSet rs = ps.executeQuery();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            while (rs.next()) {
+                list.add(new Records(
+                        UserStateTool.getUsername(),
+                        rs.getString("drug_name"),
+                        rs.getString("symptom"),
+                        rs.getString("days"),
+                        sdf.format(rs.getTimestamp("report_time")),
+                        rs.getString("status"),
+                        rs.getString("doctor_opinion")
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (ps != null) ps.close(); if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+        return list;
+    }
 
 
 
@@ -111,6 +139,35 @@ public class RecordDao {
         }
         return list;
     }
+
+
+
+    public static void updateDoctorrecord(Records record, String status) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = Dao.getConn();
+            ps = conn.prepareStatement(
+                    "update ad_record set doctor_opinion = £¿£¬status = £¿  where username = ?");
+            ps.setString(1,record.getDoctorOpinion());
+            ps.setString(2, status);
+            ps.setString(3, record.getMeName());
+            int flag1 = ps.executeUpdate();
+            if (flag1 > 0) {
+                JOptionPane.showMessageDialog(null, "ÐÞ¸Ä³É¹¦¡£");
+            } else {
+                JOptionPane.showMessageDialog(null, "ÐÞ¸ÄÊ§°Ü¡£");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (ps != null) ps.close(); if (conn != null) conn.close();
+            } catch (Exception e) {}
+        }
+    }
+
+
 
 
 

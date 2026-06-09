@@ -6,7 +6,7 @@ import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 public class Mmodel extends AbstractTableModel {
-    private String[] header = {"Ò©Æ·", "Ö¢×´", "Ê±¼ä", "×´Ì¬", "²Ù×÷"};
+    private String[] header = {"Ò©Æ·", "Ö¢×´", "Ê±¼ä", "×´Ì¬", ""};
     private List<Medicine> mdata;
 
     public Mmodel(List<Medicine> list) {

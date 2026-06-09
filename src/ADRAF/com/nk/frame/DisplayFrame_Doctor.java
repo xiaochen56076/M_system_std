@@ -6,19 +6,16 @@ import ADRAF.com.nk.dao.MedicineDao;
 import ADRAF.com.nk.dao.RecordDao;
 import ADRAF.com.nk.datamodel.Mmodel;
 import ADRAF.com.nk.datamodel.Rmodel;
-import ADRAF.com.nk.tool.MmDialog;
-import ADRAF.com.nk.tool.font;
+import ADRAF.com.nk.tool.*;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DisplayFrame_Doctor extends JFrame {
@@ -70,7 +67,7 @@ public class DisplayFrame_Doctor extends JFrame {
 
         btn_panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btn_panel.setOpaque(false);
-        JLabel doctorLabel = new JLabel("医生：李医生");
+        JLabel doctorLabel = new JLabel("医生："+ UserStateTool.getUsername());
         doctorLabel.setFont(font.ft);
         doctorLabel.setForeground(Color.WHITE);
         doctorLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
@@ -108,8 +105,8 @@ public class DisplayFrame_Doctor extends JFrame {
         querypage.setLayout(new BorderLayout());
         querypage.add(inittable(MedicineDao.getAllmedicine()));
 
-        JPanel reviewpage = initReviewPanel(RecordDao.getPatientRecords());
-        JPanel recordquerypage = initRecordQueryPanel(RecordDao.getPatientRecords());
+        JPanel reviewpage = initReviewPanel(RecordDao.getnoPatientRecords());
+        JPanel recordquerypage = initRecordQueryPanel(RecordDao.getyesPatientRecords());
 
         cardpaanel.add(querypage, "query");
         cardpaanel.add(reviewpage, "review");
@@ -184,6 +181,7 @@ public class DisplayFrame_Doctor extends JFrame {
             }
         });
 
+
         scrollPane = new JScrollPane(resultTable);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -211,10 +209,7 @@ public class DisplayFrame_Doctor extends JFrame {
         }
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-            setText(value == null ? "" : value.toString());
-            if ("".equals(value)) {
-                setText("查看详情");
-            }
+            setText(value.toString());
             return this;
         }
     }
@@ -244,15 +239,32 @@ public class DisplayFrame_Doctor extends JFrame {
         reviewTable.getColumnModel().getColumn(2).setPreferredWidth(100);
         reviewTable.getColumnModel().getColumn(3).setPreferredWidth(100);
         reviewTable.getColumnModel().getColumn(4).setPreferredWidth(120);
-        reviewTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
+        reviewTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
+        reviewTable.getColumnModel().getColumn(6).setCellRenderer(new BtnRenderer());
 
         reviewTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = reviewTable.columnAtPoint(e.getPoint());
                 int row = reviewTable.rowAtPoint(e.getPoint());
-                if (col == 4) {
-//                    showReviewDialog(row);
+                if (col == 5) {
+                    Rmodel rm = (Rmodel) reviewTable.getModel();
+                    Records r = rm.getRecordrow(row);
+                    new PrecDialog(r, "已驳回");
+                }
+            }
+        });
+
+
+        reviewTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int col = reviewTable.columnAtPoint(e.getPoint());
+                int row = reviewTable.rowAtPoint(e.getPoint());
+                if(col == 6){
+                    Rmodel rm = (Rmodel) reviewTable.getModel();
+                    Records r = rm.getRecordrow(row);
+                    new PrecDialog(r,"已通过");
                 }
             }
         });
@@ -265,20 +277,6 @@ public class DisplayFrame_Doctor extends JFrame {
         return panel;
     }
 
-//    private void showReviewDialog(int row) {
-//        if (row < 0) return;
-//        String drug = reviewData[row][0];
-//        String[] options = {"通过", "驳回"};
-//        int choice = JOptionPane.showOptionDialog(this,
-//                "药品：" + drug + "症状：" + reviewData[row][1] + "患者：" + reviewData[row][2],
-//                "审核意见", JOptionPane.DEFAULT_OPTION,
-//                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-//        if (choice == 0) {
-//            JOptionPane.showMessageDialog(this, "已通过审核 - " + drug);
-//        } else if (choice == 1) {
-//            JOptionPane.showMessageDialog(this, "已驳回 - " + drug);
-//        }
-//    }
 
 
 

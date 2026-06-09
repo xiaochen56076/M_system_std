@@ -6,6 +6,7 @@ package ADRAF.com.nk.frame;
 
 import ADRAF.com.nk.bean.User;
 import ADRAF.com.nk.dao.UserDao;
+import ADRAF.com.nk.tool.UserStateTool;
 import ADRAF.com.nk.tool.WindowTool;
 import ADRAF.com.nk.tool.font;
 
@@ -126,8 +127,13 @@ public class LoginFrame_Fir extends JFrame {
         User user = new User();
         user.setName(name);
         user.setPwd(password);
-        if(UserDao.userLogin(user)){
-            DisplayFrame_Patient mf = new DisplayFrame_Patient();
+        boolean bool = UserDao.userLogin(user);
+        if(bool && UserStateTool.getRight() == 1){
+            new DisplayFrame_Patient();
+            dispose();
+        }
+        else if(bool && UserStateTool.getRight() == 2){
+            new DisplayFrame_Doctor();
             dispose();
         }
 

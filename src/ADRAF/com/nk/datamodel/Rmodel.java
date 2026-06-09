@@ -5,12 +5,15 @@ package ADRAF.com.nk.datamodel;
 // @Project：ADARF_P
 
 import ADRAF.com.nk.bean.Records;
+import ADRAF.com.nk.bean.User;
+import ADRAF.com.nk.tool.UserStateTool;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 public class Rmodel extends AbstractTableModel {
-    private String[] header = {"药品名称", "不良反应", "用药时间", "记录时间", "审核状态", "操作"};
+    private String[] header = {"药品名称", "不良反应", "用药时间", "记录时间", "审核状态", ""};
+    private String[] headerhandle = {"药品名称", "不良反应", "用药时间", "记录时间", "审核状态", "", ""};
     private List<Records> rdata;
 
     public Rmodel(List<Records> list) {
@@ -24,22 +27,39 @@ public class Rmodel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
+        int r = UserStateTool.getRight();
+        if(r == 2){
+            return headerhandle.length;
+        }
         return header.length;
     }
 
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 5 || columnIndex == 6;
-    }
-
-    @Override
     public String getColumnName(int column) {
+        int r = UserStateTool.getRight();
+        if(r == 2){
+            return headerhandle[column];
+        }
         return header[column];
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Records m = rdata.get(rowIndex);
+        int r = UserStateTool.getRight();
+
+        if (r == 2) {
+            switch (columnIndex) {
+                case 0: return m.getMeName();
+                case 1: return m.getSymptom();
+                case 2: return m.getDays();
+                case 3: return m.getReportTime();
+                case 4: return m.getStatus();
+                case 5: return "驳回";
+                case 6: return "通过";
+                default: return null;
+            }
+        }
         switch (columnIndex) {
             case 0: return m.getMeName();
             case 1: return m.getSymptom();

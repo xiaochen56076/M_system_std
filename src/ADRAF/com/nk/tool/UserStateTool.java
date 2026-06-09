@@ -8,6 +8,16 @@ public class UserStateTool {
 	private static String username = null;
 	private static String password = null;
 	private static String vcode = null;
+	private static int right = 0;
+
+
+	public static int getRight() {
+		return right;
+	}
+
+	public static void setRight(int right) {
+		UserStateTool.right = right;
+	}
 
 	public static void setUsername(String username) {
 		UserStateTool.username = username;

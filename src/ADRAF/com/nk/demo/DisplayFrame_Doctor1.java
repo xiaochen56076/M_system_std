@@ -2,7 +2,6 @@ package ADRAF.com.nk.demo;
 
 import ADRAF.com.nk.bean.Medicine;
 import ADRAF.com.nk.bean.Records;
-import ADRAF.com.nk.dao.Dao;
 import ADRAF.com.nk.dao.MedicineDao;
 import ADRAF.com.nk.dao.RecordDao;
 import ADRAF.com.nk.datamodel.Mmodel;
@@ -137,7 +136,7 @@ public class DisplayFrame_Doctor1 extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardpaanel, "recordquery");
-                refreshRecordQueryTable(RecordDao.getPatientRecords());
+                refreshRecordQueryTable(RecordDao.getnoPatientRecords());
             }
         });
 
@@ -260,7 +259,7 @@ public class DisplayFrame_Doctor1 extends JFrame {
     }
 
     private void refreshReviewTable() {
-        pendingList = RecordDao.getPatientRecords();
+        pendingList = RecordDao.getnoPatientRecords();
         if (reviewTable == null) {
             reviewTable = new JTable(new Rmodel(pendingList));
         } else {
@@ -411,7 +410,7 @@ public class DisplayFrame_Doctor1 extends JFrame {
 //            public void actionPerformed(ActionEvent e) {
 //                String keyword = recordSearchField.getText().trim();
 //                if (keyword.isEmpty()) {
-//                    refreshRecordQueryTable(RecordDao.getPatientRecords());
+//                    refreshRecordQueryTable(RecordDao.getnoPatientRecords());
 //                } else {
 //                    refreshRecordQueryTable(searchAllRecords(keyword));
 //                }
