@@ -9,12 +9,13 @@ public class Records {
     private String status;
     private String doctorOpinion;
 
-    public Records(String username, String meName, String symptom, String days, String reportTime, String doctorOpinion) {
+    public Records(String username, String meName, String symptom, String days, String reportTime,String status ,String doctorOpinion) {
         this.username = username;
         this.meName = meName;
         this.symptom = symptom;
         this.days = days;
         this.reportTime = reportTime;
+        this.status = status;
         this.doctorOpinion = doctorOpinion;
     }
 
@@ -25,6 +26,14 @@ public class Records {
         this.days = days;
     }
 
+    public Records(String username, String meName, String symptom, String days, String reportTime, String doctorOpinion) {
+        this.username = username;
+        this.meName = meName;
+        this.symptom = symptom;
+        this.days = days;
+        this.reportTime = reportTime;
+        this.doctorOpinion = doctorOpinion;
+    }
 
     public String getUsername() {
         return username;

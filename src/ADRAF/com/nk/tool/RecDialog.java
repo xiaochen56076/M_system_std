@@ -21,7 +21,7 @@ public class RecDialog extends JDialog {
         val1.setBounds(100, 20, 310, 25);
         add(val1);
 
-        JLabel lbl2 = new JLabel("????");
+        JLabel lbl2 = new JLabel("症状");
         lbl2.setBounds(20, 55, 70, 25);
         add(lbl2);
         JTextArea taSymptom = new JTextArea(record.getSymptom());
@@ -32,31 +32,31 @@ public class RecDialog extends JDialog {
         spSymptom.setBounds(100, 55, 310, 60);
         add(spSymptom);
 
-        JLabel lbl3 = new JLabel("??????");
+        JLabel lbl3 = new JLabel("使用时间");
         lbl3.setBounds(20, 125, 70, 25);
         add(lbl3);
-        JLabel val3 = new JLabel(record.getDays() + "??");
+        JLabel val3 = new JLabel(record.getDays() + "天");
         val3.setBounds(100, 125, 310, 25);
         add(val3);
 
-        JLabel lbl4 = new JLabel("???????");
+        JLabel lbl4 = new JLabel("上报时间");
         lbl4.setBounds(20, 160, 70, 25);
         add(lbl4);
         JLabel val4 = new JLabel(record.getReportTime());
         val4.setBounds(100, 160, 310, 25);
         add(val4);
 
-        JLabel lbl5 = new JLabel("????");
+        JLabel lbl5 = new JLabel("审核状态");
         lbl5.setBounds(20, 195, 70, 25);
         add(lbl5);
         JLabel val5 = new JLabel(record.getStatus());
         val5.setBounds(100, 195, 310, 25);
         add(val5);
 
-        JLabel lbl6 = new JLabel("????????");
+        JLabel lbl6 = new JLabel("医生建议");
         lbl6.setBounds(20, 230, 70, 25);
         add(lbl6);
-        JTextArea taOpinion = new JTextArea(record.getDoctorOpinion() != null ? record.getDoctorOpinion() : "???");
+        JTextArea taOpinion = new JTextArea(record.getDoctorOpinion() != null ? record.getDoctorOpinion() : "无");
         taOpinion.setLineWrap(true);
         taOpinion.setWrapStyleWord(true);
         taOpinion.setEditable(false);
@@ -64,7 +64,7 @@ public class RecDialog extends JDialog {
         spOpinion.setBounds(100, 230, 310, 60);
         add(spOpinion);
 
-        JButton closeBtn = new JButton("???");
+        JButton closeBtn = new JButton("关闭");
         closeBtn.setBounds(185, 305, 80, 30);
         closeBtn.addActionListener(new ActionListener() {
             @Override

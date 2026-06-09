@@ -10,7 +10,7 @@ import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 public class Rmodel extends AbstractTableModel {
-    private String[] header = {"药品名称", "不良反应", "用药时间", "记录时间", "操作"};
+    private String[] header = {"药品名称", "不良反应", "用药时间", "记录时间", "审核状态", "操作"};
     private List<Records> rdata;
 
     public Rmodel(List<Records> list) {
@@ -45,7 +45,8 @@ public class Rmodel extends AbstractTableModel {
             case 1: return m.getSymptom();
             case 2: return m.getDays();
             case 3: return m.getReportTime();
-            case 4: return "查看";
+            case 4: return m.getStatus();
+            case 5: return "查看";
             default: return null;
         }
     }

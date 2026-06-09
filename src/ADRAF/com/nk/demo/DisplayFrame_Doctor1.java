@@ -1,7 +1,8 @@
-package ADRAF.com.nk.frame;
+package ADRAF.com.nk.demo;
 
 import ADRAF.com.nk.bean.Medicine;
 import ADRAF.com.nk.bean.Records;
+import ADRAF.com.nk.dao.Dao;
 import ADRAF.com.nk.dao.MedicineDao;
 import ADRAF.com.nk.dao.RecordDao;
 import ADRAF.com.nk.datamodel.Mmodel;
@@ -11,7 +12,6 @@ import ADRAF.com.nk.tool.font;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,7 +21,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DisplayFrame_Doctor extends JFrame {
+public class DisplayFrame_Doctor1 extends JFrame {
 
     private JTextField jTextField;
     private JLabel title;
@@ -43,7 +43,7 @@ public class DisplayFrame_Doctor extends JFrame {
     private JTable recordQueryTable;
     private JScrollPane recordQueryScrollPane;
 
-    public DisplayFrame_Doctor() {
+    public DisplayFrame_Doctor1() {
         init();
         inittext();
         setVisible(true);
@@ -108,8 +108,8 @@ public class DisplayFrame_Doctor extends JFrame {
         querypage.setLayout(new BorderLayout());
         querypage.add(inittable(MedicineDao.getAllmedicine()));
 
-        JPanel reviewpage = initReviewPanel(RecordDao.getPatientRecords());
-        JPanel recordquerypage = initRecordQueryPanel(RecordDao.getPatientRecords());
+        JPanel reviewpage = initReviewPanel(RecordDao.getMyRecords());
+        JPanel recordquerypage = initRecordQueryPanel(RecordDao.getMyRecords());
 
         cardpaanel.add(querypage, "query");
         cardpaanel.add(reviewpage, "review");
@@ -130,12 +130,14 @@ public class DisplayFrame_Doctor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardpaanel, "review");
+                refreshReviewTable();
             }
         });
         btn3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardpaanel, "recordquery");
+                refreshRecordQueryTable(RecordDao.getPatientRecords());
             }
         });
 
@@ -210,7 +212,8 @@ public class DisplayFrame_Doctor extends JFrame {
             setOpaque(true);
         }
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int row, int col) {
             setText(value == null ? "" : value.toString());
             if ("".equals(value)) {
                 setText("查看详情");
@@ -224,35 +227,26 @@ public class DisplayFrame_Doctor extends JFrame {
 
 
 
+    private List<Records> pendingList = new ArrayList<>();
+
     private JPanel initReviewPanel(List<Records> list) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        JLabel titleLabel = new JLabel("反馈审核");
+        JLabel titleLabel = new JLabel("审核管理");
         titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
         titleLabel.setFont(new Font("null", Font.BOLD, 22));
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        reviewTable = new JTable(new Rmodel(list));
-
-
-        reviewTable.setRowHeight(35);
-        reviewTable.getTableHeader().setReorderingAllowed(false);
-        reviewTable.getTableHeader().setResizingAllowed(false);
-        reviewTable.getColumnModel().getColumn(0).setPreferredWidth(120);
-        reviewTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        reviewTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-        reviewTable.getColumnModel().getColumn(3).setPreferredWidth(100);
-        reviewTable.getColumnModel().getColumn(4).setPreferredWidth(120);
-        reviewTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
+        refreshReviewTable();
 
         reviewTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = reviewTable.columnAtPoint(e.getPoint());
                 int row = reviewTable.rowAtPoint(e.getPoint());
-                if (col == 4) {
-//                    showReviewDialog(row);
+                if (col == 4 && row >= 0 && row < pendingList.size()) {
+                    showReviewDialog(pendingList.get(row));
                 }
             }
         });
@@ -265,34 +259,139 @@ public class DisplayFrame_Doctor extends JFrame {
         return panel;
     }
 
-//    private void showReviewDialog(int row) {
-//        if (row < 0) return;
-//        String drug = reviewData[row][0];
-//        String[] options = {"通过", "驳回"};
-//        int choice = JOptionPane.showOptionDialog(this,
-//                "药品：" + drug + "症状：" + reviewData[row][1] + "患者：" + reviewData[row][2],
-//                "审核意见", JOptionPane.DEFAULT_OPTION,
-//                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-//        if (choice == 0) {
-//            JOptionPane.showMessageDialog(this, "已通过审核 - " + drug);
-//        } else if (choice == 1) {
-//            JOptionPane.showMessageDialog(this, "已驳回 - " + drug);
-//        }
-//    }
+    private void refreshReviewTable() {
+        pendingList = RecordDao.getPatientRecords();
+        if (reviewTable == null) {
+            reviewTable = new JTable(new Rmodel(pendingList));
+        } else {
+            reviewTable.setModel(new Rmodel(pendingList));
+        }
+        reviewTable.setRowHeight(35);
+        reviewTable.getTableHeader().setReorderingAllowed(false);
+        reviewTable.getTableHeader().setResizingAllowed(false);
+        reviewTable.getColumnModel().getColumn(0).setPreferredWidth(120);
+        reviewTable.getColumnModel().getColumn(1).setPreferredWidth(180);
+        reviewTable.getColumnModel().getColumn(2).setPreferredWidth(80);
+        reviewTable.getColumnModel().getColumn(3).setPreferredWidth(120);
+        reviewTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
+    }
 
+    private void showReviewDialog(Records item) {
+        if (item == null) return;
+        JDialog dialog = new JDialog(this, "审核管理", true);
+        dialog.setSize(500, 420);
+        dialog.setLocationRelativeTo(this);
 
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 10, 5, 10);
 
+        gbc.gridx = 0; gbc.gridy = 0;
+        panel.add(new JLabel("药品："), gbc); gbc.gridx = 1; gbc.gridwidth = 2;
+        panel.add(new JLabel(item.getMeName()), gbc);
+        gbc.gridwidth = 1;
 
+        gbc.gridx = 0; gbc.gridy = 1;
+        panel.add(new JLabel("提交人："), gbc); gbc.gridx = 1; gbc.gridwidth = 2;
+        panel.add(new JLabel(item.getUsername()), gbc);
+        gbc.gridwidth = 1;
 
+        gbc.gridx = 0; gbc.gridy = 2;
+        panel.add(new JLabel("症状："), gbc); gbc.gridx = 1; gbc.gridwidth = 2;
+        JTextArea symptomArea = new JTextArea(item.getSymptom());
+        symptomArea.setEditable(false);
+        symptomArea.setLineWrap(true);
+        symptomArea.setWrapStyleWord(true);
+        symptomArea.setBackground(new Color(245, 245, 245));
+        JScrollPane symptomSp = new JScrollPane(symptomArea);
+        symptomSp.setPreferredSize(new Dimension(300, 60));
+        panel.add(symptomSp, gbc);
+        gbc.gridwidth = 1;
 
-    //记录查询
+        gbc.gridx = 0; gbc.gridy = 3;
+        panel.add(new JLabel("用药天数："), gbc); gbc.gridx = 1; gbc.gridwidth = 2;
+        panel.add(new JLabel(item.getDays() + "天"), gbc);
+        gbc.gridwidth = 1;
+
+        gbc.gridx = 0; gbc.gridy = 4;
+        panel.add(new JLabel("报告时间："), gbc); gbc.gridx = 1; gbc.gridwidth = 2;
+        panel.add(new JLabel(item.getReportTime()), gbc);
+        gbc.gridwidth = 1;
+
+        gbc.gridx = 0; gbc.gridy = 5;
+        panel.add(new JLabel("医生意见："), gbc); gbc.gridx = 1; gbc.gridwidth = 2;
+        JTextArea opinionArea = new JTextArea(3, 20);
+        opinionArea.setLineWrap(true);
+        opinionArea.setWrapStyleWord(true);
+        JScrollPane osp = new JScrollPane(opinionArea);
+        osp.setPreferredSize(new Dimension(300, 60));
+        panel.add(osp, gbc);
+        gbc.gridwidth = 1;
+
+        gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JPanel btnPanel = new JPanel(new FlowLayout());
+        JButton btnApprove = new JButton("通过");
+        btnApprove.setBackground(new Color(60, 179, 113));
+        btnApprove.setForeground(Color.WHITE);
+        JButton btnReject = new JButton("驳回");
+        btnReject.setBackground(new Color(220, 20, 60));
+        btnReject.setForeground(Color.WHITE);
+        JButton btnCancel = new JButton("取消");
+
+//        btnApprove.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                String opinion = opinionArea.getText().trim();
+//                if (opinion.isEmpty()) {
+//                    JOptionPane.showMessageDialog(dialog, "请填写医生意见");
+//                    return;
+//                }
+//                RecordDao.updateRecordStatus(item.getId(), "已通过", opinion);
+//                JOptionPane.showMessageDialog(dialog, "已通过审核");
+//                dialog.dispose();
+//                refreshReviewTable();
+//            }
+//        });
+//
+//        btnReject.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                String opinion = opinionArea.getText().trim();
+//                if (opinion.isEmpty()) {
+//                    JOptionPane.showMessageDialog(dialog, "请填写医生意见");
+//                    return;
+//                }
+//                RecordDao.updateRecordStatus(item.getId(), "已驳回", opinion);
+//                JOptionPane.showMessageDialog(dialog, "已驳回该记录");
+//                dialog.dispose();
+//                refreshReviewTable();
+//            }
+//        });
+
+        btnCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+
+        btnPanel.add(btnApprove);
+        btnPanel.add(btnReject);
+        btnPanel.add(btnCancel);
+        panel.add(btnPanel, gbc);
+
+        dialog.add(panel);
+        dialog.setVisible(true);
+    }
     private JPanel initRecordQueryPanel(List<Records> list) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
         JLabel titleLabel = new JLabel("记录查询");
         titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
-        titleLabel.setFont(new Font("null", Font.BOLD, 22));
+        titleLabel.setFont(font.ft);
         panel.add(titleLabel, BorderLayout.NORTH);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
@@ -305,37 +404,24 @@ public class DisplayFrame_Doctor extends JFrame {
         btnRecordSearch.setBackground(new Color(60, 179, 113));
         btnRecordSearch.setForeground(Color.WHITE);
 
-
         recordQueryTable = new JTable(new Rmodel(list));
-
-
-
 
 //        btnRecordSearch.addActionListener(new ActionListener() {
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
-//                String keyword = recordSearchField.getText().trim().toLowerCase();
+//                String keyword = recordSearchField.getText().trim();
 //                if (keyword.isEmpty()) {
-//                    refreshRecordQueryTable(recordQueryData);
-//                    return;
+//                    refreshRecordQueryTable(RecordDao.getPatientRecords());
+//                } else {
+//                    refreshRecordQueryTable(searchAllRecords(keyword));
 //                }
-//                ArrayList<String[]> filteredList = new ArrayList<>();
-//                for (String[] row : recordQueryData) {
-//                    if (row[0].toLowerCase().contains(keyword) || row[1].toLowerCase().contains(keyword)) {
-//                        filteredList.add(row);
-//                    }
-//                }
-//                refreshRecordQueryTable(filteredList.toArray(new String[0][]));
 //            }
 //        });
-
-
 
         searchPanel.add(recordSearchField);
         searchPanel.add(btnRecordSearch);
 
         panel.add(searchPanel, BorderLayout.NORTH);
-
 
         initRecordQuerytable();
 
@@ -363,7 +449,8 @@ public class DisplayFrame_Doctor extends JFrame {
         initRecordQuerytable();
     }
 
-    public static void main(String[] args) {
-        new DisplayFrame_Doctor();
+
+public static void main(String[] args) {
+        new DisplayFrame_Doctor1();
     }
 }

@@ -160,7 +160,6 @@ public class DisplayFrame_Patient extends JFrame {
         btn2.addActionListener(new ActionListener() {@Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardpaanel, "report");
-                refreshRecordTable(RecordDao.getMyRecords());
             }
         });
         btn3.addActionListener(new ActionListener() {
@@ -173,6 +172,7 @@ public class DisplayFrame_Patient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardpaanel, "record");
+                refreshRecordTable(RecordDao.getMyRecords());
             }
         });
 
@@ -471,6 +471,7 @@ public class DisplayFrame_Patient extends JFrame {
                 JOptionPane.showMessageDialog(null, "提交成功，可在'我的记录'查看进度", "提交成功", JOptionPane.INFORMATION_MESSAGE);
                 daystext.setText("");
                 symptomtext.setText("");
+                mSearch.setText("");
             }
         });
 
@@ -501,7 +502,6 @@ public class DisplayFrame_Patient extends JFrame {
 
 
         recordTable = new JTable(new Rmodel(word));
-        recordTable();
 
 
         recordTable.addMouseListener(new MouseAdapter() {
@@ -509,7 +509,7 @@ public class DisplayFrame_Patient extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int col = recordTable.columnAtPoint(e.getPoint());
                 int row = recordTable.rowAtPoint(e.getPoint());
-                if (col == 4) {
+                if (col == 5) {
                     Records r = ((Rmodel)recordTable.getModel()).getRecordrow(row);
                     new RecDialog(r);
                 }
@@ -535,7 +535,8 @@ public class DisplayFrame_Patient extends JFrame {
         recordTable.getColumnModel().getColumn(1).setPreferredWidth(250);
         recordTable.getColumnModel().getColumn(2).setPreferredWidth(150);
         recordTable.getColumnModel().getColumn(3).setPreferredWidth(80);
-        recordTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
+        recordTable.getColumnModel().getColumn(4).setPreferredWidth(80);
+        recordTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
     }
 
     public static void main(String[] args) {
