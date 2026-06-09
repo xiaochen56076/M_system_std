@@ -1,6 +1,7 @@
 package ADRAF.com.nk.bean;
 
 public class Records {
+    private int id;
     private String username;
     private String meName;
     private String symptom;
@@ -9,7 +10,8 @@ public class Records {
     private String status;
     private String doctorOpinion;
 
-    public Records(String username, String meName, String symptom, String days, String reportTime,String status ,String doctorOpinion) {
+    public Records(String username, int id,String meName, String symptom, String days, String reportTime,String status ,String doctorOpinion) {
+        this.id = id;
         this.username = username;
         this.meName = meName;
         this.symptom = symptom;
@@ -18,6 +20,8 @@ public class Records {
         this.status = status;
         this.doctorOpinion = doctorOpinion;
     }
+
+
 
 
     public Records(String meName, String symptom, String days) {
@@ -33,6 +37,15 @@ public class Records {
         this.days = days;
         this.reportTime = reportTime;
         this.doctorOpinion = doctorOpinion;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {

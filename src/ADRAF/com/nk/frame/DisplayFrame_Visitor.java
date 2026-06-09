@@ -85,6 +85,7 @@ public class DisplayFrame_Visitor extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 LoginFrame_Sec lf = new LoginFrame_Sec();
                 WindowTool.setJF(lf);
+                WindowTool.setJFS(DisplayFrame_Visitor.this);
             }
         });
 

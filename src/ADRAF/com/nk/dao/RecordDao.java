@@ -8,6 +8,7 @@ import ADRAF.com.nk.bean.Records;
 import ADRAF.com.nk.tool.UserStateTool;
 
 import javax.swing.*;
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -55,12 +56,13 @@ public class RecordDao {
         try {
             conn = Dao.getConn();
             ps = conn.prepareStatement(
-                    "SELECT drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record where status = '待审核' ORDER BY report_time DESC");
+                    "SELECT id,username ,drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record where status = '待审核' ORDER BY report_time DESC");
             ResultSet rs = ps.executeQuery();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             while (rs.next()) {
                 list.add(new Records(
-                        UserStateTool.getUsername(),
+                        rs.getString("username"),
+                        rs.getInt("id"),
                         rs.getString("drug_name"),
                         rs.getString("symptom"),
                         rs.getString("days"),
@@ -85,12 +87,13 @@ public class RecordDao {
         try {
             conn = Dao.getConn();
             ps = conn.prepareStatement(
-                    "SELECT drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record where status = '已审核' ORDER BY report_time DESC");
+                    "SELECT id, username ,drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record where status = '已通过' or status = '已驳回' ORDER BY report_time DESC");
             ResultSet rs = ps.executeQuery();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             while (rs.next()) {
                 list.add(new Records(
-                        UserStateTool.getUsername(),
+                        rs.getString("username"),
+                        rs.getInt("id"),
                         rs.getString("drug_name"),
                         rs.getString("symptom"),
                         rs.getString("days"),
@@ -117,13 +120,14 @@ public class RecordDao {
         try {
             conn = Dao.getConn();
             ps = conn.prepareStatement(
-                    "SELECT drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record WHERE username = ? ORDER BY report_time DESC");
+                    "SELECT id,username ,drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record WHERE username = ? ORDER BY report_time DESC");
             ps.setString(1, UserStateTool.getUsername());
             ResultSet rs = ps.executeQuery();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             while (rs.next()) {
                 list.add(new Records(
-                        UserStateTool.getUsername(),
+                        rs.getString("username"),
+                        rs.getInt("id"),
                         rs.getString("drug_name"),
                         rs.getString("symptom"),
                         rs.getString("days"),
@@ -142,21 +146,21 @@ public class RecordDao {
 
 
 
-    public static void updateDoctorrecord(Records record, String status) {
+    public static void updateDoctorrecord(Records record, String status, Component PrecDialog) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = Dao.getConn();
-            ps = conn.prepareStatement(
-                    "update ad_record set doctor_opinion = ？，status = ？  where username = ?");
+            ps = conn.prepareStatement("update ad_record set doctor_opinion=?,status =? where username = ? and id = ?");
             ps.setString(1,record.getDoctorOpinion());
             ps.setString(2, status);
-            ps.setString(3, record.getMeName());
+            ps.setString(3, record.getUsername());
+            ps.setInt(4, record.getId());
             int flag1 = ps.executeUpdate();
             if (flag1 > 0) {
-                JOptionPane.showMessageDialog(null, "修改成功。");
+                JOptionPane.showMessageDialog(PrecDialog, "修改成功。");
             } else {
-                JOptionPane.showMessageDialog(null, "修改失败。");
+                JOptionPane.showMessageDialog(PrecDialog, "修改失败。");
             }
         } catch (Exception e) {
             e.printStackTrace();

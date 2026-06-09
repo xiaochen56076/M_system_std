@@ -352,7 +352,7 @@ public class DisplayFrame_Patient extends JFrame {
         return query;
     }
 
-    //上报
+    //上报部分
     private JPanel initReportPanel() {
         JPanel panel = new JPanel(null);
         panel.setBackground(Color.WHITE);

@@ -4,6 +4,7 @@ import ADRAF.com.nk.bean.Medicine;
 import ADRAF.com.nk.bean.Records;
 import ADRAF.com.nk.dao.MedicineDao;
 import ADRAF.com.nk.dao.RecordDao;
+import ADRAF.com.nk.datamodel.DRmodel;
 import ADRAF.com.nk.datamodel.Mmodel;
 import ADRAF.com.nk.datamodel.Rmodel;
 import ADRAF.com.nk.tool.*;
@@ -81,6 +82,7 @@ public class DisplayFrame_Doctor extends JFrame {
         add(header, BorderLayout.NORTH);
     }
 
+    //依旧左右布局
     private JSplitPane initlrpanel() {
         leftpanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         leftpanel.setBackground(Color.WHITE);
@@ -105,8 +107,8 @@ public class DisplayFrame_Doctor extends JFrame {
         querypage.setLayout(new BorderLayout());
         querypage.add(inittable(MedicineDao.getAllmedicine()));
 
-        JPanel reviewpage = initReviewPanel(RecordDao.getnoPatientRecords());
-        JPanel recordquerypage = initRecordQueryPanel(RecordDao.getyesPatientRecords());
+        JPanel reviewpage = initReviewTable(RecordDao.getnoPatientRecords());
+        JPanel recordquerypage = initRecordQueryTable(RecordDao.getyesPatientRecords());
 
         cardpaanel.add(querypage, "query");
         cardpaanel.add(reviewpage, "review");
@@ -159,6 +161,9 @@ public class DisplayFrame_Doctor extends JFrame {
         search_area.add(btn_search);
     }
 
+
+
+    //药物查询
     private void refreshTable(List<Medicine> list) {
         resultTable.setModel(new Mmodel(list));
         table();
@@ -203,44 +208,28 @@ public class DisplayFrame_Doctor extends JFrame {
         resultTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
     }
 
-    public class BtnRenderer extends JButton implements TableCellRenderer {
-        public BtnRenderer() {
-            setOpaque(true);
-        }
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-            setText(value.toString());
-            return this;
-        }
+
+
+    //审核部分
+    private void refreshReviewTable(List<Records> list){
+        reviewTable.setModel(new DRmodel(list));
+        reviewTable();
     }
 
-
-
-
-
-
-    private JPanel initReviewPanel(List<Records> list) {
+    private JPanel initReviewTable(List<Records> list) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
+
+        JPanel wordPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        wordPanel.setBackground(Color.WHITE);
         JLabel titleLabel = new JLabel("反馈审核");
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
-        titleLabel.setFont(new Font("null", Font.BOLD, 22));
-        panel.add(titleLabel, BorderLayout.NORTH);
+        titleLabel.setFont(font.ft);
+        wordPanel.add(titleLabel);
+        panel.add(wordPanel, BorderLayout.NORTH);
 
-        reviewTable = new JTable(new Rmodel(list));
-
-
-        reviewTable.setRowHeight(35);
-        reviewTable.getTableHeader().setReorderingAllowed(false);
-        reviewTable.getTableHeader().setResizingAllowed(false);
-        reviewTable.getColumnModel().getColumn(0).setPreferredWidth(120);
-        reviewTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        reviewTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-        reviewTable.getColumnModel().getColumn(3).setPreferredWidth(100);
-        reviewTable.getColumnModel().getColumn(4).setPreferredWidth(120);
-        reviewTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
-        reviewTable.getColumnModel().getColumn(6).setCellRenderer(new BtnRenderer());
+        reviewTable = new JTable(new DRmodel(list));
+        reviewTable();
 
         reviewTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -248,9 +237,14 @@ public class DisplayFrame_Doctor extends JFrame {
                 int col = reviewTable.columnAtPoint(e.getPoint());
                 int row = reviewTable.rowAtPoint(e.getPoint());
                 if (col == 5) {
-                    Rmodel rm = (Rmodel) reviewTable.getModel();
-                    Records r = rm.getRecordrow(row);
-                    new PrecDialog(r, "已驳回");
+                    DRmodel rm = (DRmodel) reviewTable.getModel();
+                    Records r = rm.getDRecordrow(row);
+                    test(r);
+                    PrecDialog pd = new PrecDialog(r, "已驳回");
+                    if(pd.isUpdated()){
+                        refreshRecordQueryTable(RecordDao.getyesPatientRecords());
+                        refreshReviewTable(RecordDao.getnoPatientRecords());
+                    }
                 }
             }
         });
@@ -262,9 +256,14 @@ public class DisplayFrame_Doctor extends JFrame {
                 int col = reviewTable.columnAtPoint(e.getPoint());
                 int row = reviewTable.rowAtPoint(e.getPoint());
                 if(col == 6){
-                    Rmodel rm = (Rmodel) reviewTable.getModel();
-                    Records r = rm.getRecordrow(row);
-                    new PrecDialog(r,"已通过");
+                    DRmodel rm = (DRmodel) reviewTable.getModel();
+                    Records r = rm.getDRecordrow(row);
+                    test(r);
+                    PrecDialog pd =  new PrecDialog(r,"已通过");
+                    if(pd.isUpdated()){
+                        refreshRecordQueryTable(RecordDao.getyesPatientRecords());
+                        refreshReviewTable(RecordDao.getnoPatientRecords());
+                    }
                 }
             }
         });
@@ -277,56 +276,71 @@ public class DisplayFrame_Doctor extends JFrame {
         return panel;
     }
 
+    private void reviewTable() {
+        reviewTable.setRowHeight(35);
+        reviewTable.getTableHeader().setReorderingAllowed(false);
+        reviewTable.getTableHeader().setResizingAllowed(false);
+        reviewTable.getColumnModel().getColumn(0).setPreferredWidth(120);
+        reviewTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        reviewTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        reviewTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+        reviewTable.getColumnModel().getColumn(4).setPreferredWidth(120);
+        reviewTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
+        reviewTable.getColumnModel().getColumn(6).setCellRenderer(new BtnRenderer());
+    }
 
-
-
+    //这个是用来测试的，看看数据获取有没有问题
+    public void test(Records r){
+        System.out.println(r.getId());
+        System.out.println(r.getUsername());
+        System.out.println(r.getSymptom());
+        System.out.println(r.getMeName());
+        System.out.println(r.getDoctorOpinion());
+    }
 
 
 
     //记录查询
-    private JPanel initRecordQueryPanel(List<Records> list) {
+    private JPanel initRecordQueryTable(List<Records> list) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        JLabel titleLabel = new JLabel("记录查询");
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
-        titleLabel.setFont(new Font("null", Font.BOLD, 22));
-        panel.add(titleLabel, BorderLayout.NORTH);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         searchPanel.setBackground(Color.WHITE);
-        searchPanel.add(new JLabel("关键词："));
+        JLabel jLabel = new JLabel("关键词：");
+        jLabel.setFont(font.ft);
+        searchPanel.add(jLabel);
         recordSearchField = new JTextField(20);
         recordSearchField.setPreferredSize(new Dimension(80, 28));
         JButton btnRecordSearch = new JButton("筛选");
-        btnRecordSearch.setPreferredSize(new Dimension(80, 28));
-        btnRecordSearch.setBackground(new Color(60, 179, 113));
-        btnRecordSearch.setForeground(Color.WHITE);
 
 
         recordQueryTable = new JTable(new Rmodel(list));
 
 
+        recordQueryTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = recordQueryTable.rowAtPoint(e.getPoint());
+                int col = recordQueryTable.columnAtPoint(e.getPoint());
+                if(col == 5){
+                    Rmodel drm = (Rmodel) recordQueryTable.getModel();
+                    Records r = drm.getRecordrow(row);
+                    new RecDialog(r);
+                }
+            }
+        });
 
 
-//        btnRecordSearch.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                String keyword = recordSearchField.getText().trim().toLowerCase();
-//                if (keyword.isEmpty()) {
-//                    refreshRecordQueryTable(recordQueryData);
-//                    return;
-//                }
-//                ArrayList<String[]> filteredList = new ArrayList<>();
-//                for (String[] row : recordQueryData) {
-//                    if (row[0].toLowerCase().contains(keyword) || row[1].toLowerCase().contains(keyword)) {
-//                        filteredList.add(row);
-//                    }
-//                }
-//                refreshRecordQueryTable(filteredList.toArray(new String[0][]));
-//            }
-//        });
 
+        btnRecordSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String keyword = recordSearchField.getText().trim().toLowerCase();
+                System.out.println("测试股");
+            }
+        });
 
 
         searchPanel.add(recordSearchField);
@@ -335,7 +349,7 @@ public class DisplayFrame_Doctor extends JFrame {
         panel.add(searchPanel, BorderLayout.NORTH);
 
 
-        initRecordQuerytable();
+        initRecordQueryTable();
 
         recordQueryScrollPane = new JScrollPane(recordQueryTable);
         recordQueryScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -345,7 +359,7 @@ public class DisplayFrame_Doctor extends JFrame {
         return panel;
     }
 
-    private void initRecordQuerytable() {
+    private void initRecordQueryTable() {
         recordQueryTable.setRowHeight(35);
         recordQueryTable.getTableHeader().setReorderingAllowed(false);
         recordQueryTable.getTableHeader().setResizingAllowed(false);
@@ -354,12 +368,28 @@ public class DisplayFrame_Doctor extends JFrame {
         recordQueryTable.getColumnModel().getColumn(2).setPreferredWidth(100);
         recordQueryTable.getColumnModel().getColumn(3).setPreferredWidth(100);
         recordQueryTable.getColumnModel().getColumn(4).setPreferredWidth(100);
+        recordQueryTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
     }
 
     private void refreshRecordQueryTable(List<Records> list) {
         recordQueryTable.setModel(new Rmodel(list));
-        initRecordQuerytable();
+        initRecordQueryTable();
     }
+
+
+    //按钮渲染器
+    public class BtnRenderer extends JButton implements TableCellRenderer {
+        public BtnRenderer() {
+            setOpaque(true);
+        }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+            setText(value.toString());
+            return this;
+        }
+    }
+
+
 
     public static void main(String[] args) {
         new DisplayFrame_Doctor();

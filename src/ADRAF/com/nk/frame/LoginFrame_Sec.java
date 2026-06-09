@@ -2,6 +2,8 @@ package ADRAF.com.nk.frame;
 
 import ADRAF.com.nk.bean.User;
 import ADRAF.com.nk.dao.UserDao;
+import ADRAF.com.nk.tool.UserStateTool;
+import ADRAF.com.nk.tool.WindowTool;
 import ADRAF.com.nk.tool.font;
 
 import javax.swing.*;
@@ -102,9 +104,29 @@ public class LoginFrame_Sec extends JFrame{
         User user = new User();
         user.setName(name);
         user.setPwd(password);
-        if(UserDao.userLogin(user)){
-            DisplayFrame_Visitor mf = new DisplayFrame_Visitor();
+        boolean bool = UserDao.userLogin(user);
+        if(bool && UserStateTool.getRight() == 1){
+            JFrame jfs = WindowTool.getJFS();
+            if(jfs != null){
+                jfs.dispose();
+            }
+            new DisplayFrame_Patient();
             dispose();
+        }
+        else if(bool && UserStateTool.getRight() == 2){
+            JFrame jfs = WindowTool.getJFS();
+            if(jfs != null){
+                jfs.dispose();
+            }
+            new DisplayFrame_Doctor();
+            dispose();
+        }
+        else if (bool && UserStateTool.getRight() == 3){
+            JFrame jfs = WindowTool.getJFS();
+            if(jfs != null){
+                jfs.dispose();
+            }
+
         }
 
 

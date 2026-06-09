@@ -8,6 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PrecDialog extends JDialog {
+    private boolean updated = false;
+
+    public boolean isUpdated(){
+        return updated;
+    }
+
 
     public PrecDialog (Records record, String status){
         setTitle("¼ÇÂ¼ÏêÇé");
@@ -75,7 +81,9 @@ public class PrecDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 record.setDoctorOpinion(Opinion.getText().trim());
-                RecordDao.updateDoctorrecord(record, status);
+                RecordDao.updateDoctorrecord(record, status, PrecDialog.this);
+                updated = true;
+                dispose();
             }
         });
 
