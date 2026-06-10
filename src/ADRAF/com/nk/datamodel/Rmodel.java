@@ -5,23 +5,21 @@ package ADRAF.com.nk.datamodel;
 // @Project：ADARF_P
 
 import ADRAF.com.nk.bean.Records;
-import ADRAF.com.nk.bean.User;
-import ADRAF.com.nk.tool.UserStateTool;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 public class Rmodel extends AbstractTableModel {
     private String[] header = {"药品名称", "不良反应描述", "用药时间（天）", "上报时间", "审核状态", ""};
-    private List<Records> rdata;
+    private List<Records> data;
 
     public Rmodel(List<Records> list) {
-        this.rdata = list;
+        this.data = list;
     }
 
     @Override
     public int getRowCount() {
-        return rdata.size();
+        return data.size();
     }
 
     @Override
@@ -36,7 +34,7 @@ public class Rmodel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Records m = rdata.get(rowIndex);
+        Records m = data.get(rowIndex);
         switch (columnIndex) {
             case 0: return m.getMeName();
             case 1: return m.getSymptom();
@@ -49,6 +47,6 @@ public class Rmodel extends AbstractTableModel {
     }
 
     public Records getRecordrow(int row) {
-        return rdata.get(row);
+        return data.get(row);
     }
 }

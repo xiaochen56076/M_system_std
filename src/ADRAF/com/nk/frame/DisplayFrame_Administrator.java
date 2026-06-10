@@ -1,18 +1,16 @@
 package ADRAF.com.nk.frame;
 
 import ADRAF.com.nk.bean.Medicine;
+import ADRAF.com.nk.bean.User;
 import ADRAF.com.nk.dao.MedicineDao;
-import ADRAF.com.nk.datamodel.DMmodel;
-import ADRAF.com.nk.datamodel.DRmodel;
-import ADRAF.com.nk.datamodel.Mmodel;
+import ADRAF.com.nk.dao.UserDao;
+import ADRAF.com.nk.datamodel.*;
 import ADRAF.com.nk.tool.AddMmDialog;
 import ADRAF.com.nk.tool.MmDialog;
 import ADRAF.com.nk.tool.font;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -40,23 +38,15 @@ public class DisplayFrame_Administrator extends JFrame {
     private JScrollPane memScrollPane;
     private JButton btnAddDrug;
 
-    private JTable userTable;
-    private JScrollPane userScrollPane;
     private JButton btnAddDoctor;
-    private String[][] userData = {
-            {"张三", "患者", "正常",""},
-            {"李四", "患者", "正常", ""},
-            {"王五", "患者", "禁用", ""},
-            {"李医生", "医护", "正常", ""}
-    };
 
     private JTable feedbackTable;
     private JScrollPane feedbackScrollPane;
     private String[][] feedbackData = {
-            {"阿莫西林", "皮疹", "张三", "01-15", "已通过", ""},
-            {"布洛芬", "胃痛", "李四", "01-16", "待审核", ""},
-            {"头孢拉定", "腹泻", "王五", "01-18", "已通过", ""},
-            {"阿司匹林", "出血", "赵六", "01-20", "待审核", ""}
+            {"阿莫西林", "皮疹", "患者", "01-15", "未通过", ""},
+            {"布洛芬", "胃痛", "患者", "01-16", "已通过", ""},
+            {"头孢拉定", "腹泻", "患者", "01-18", "未通过", ""},
+            {"阿司匹林", "呕血", "患者", "01-20", "已通过", ""}
     };
 
     public DisplayFrame_Administrator() {
@@ -67,7 +57,7 @@ public class DisplayFrame_Administrator extends JFrame {
 
     private void init() {
         setSize(1400, 800);
-        setTitle("药物不良反应查询分析平台(管理员模式)");
+        setTitle("药物不良反应咨询平台(管理员模式)");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -79,7 +69,7 @@ public class DisplayFrame_Administrator extends JFrame {
         header.setPreferredSize(new Dimension(0, 40));
         header.setLayout(new BorderLayout());
 
-        title = new JLabel("药物不良反应查询反馈平台");
+        title = new JLabel("药物不良反应咨询平台");
         title.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
         title.setFont(new Font("null", Font.BOLD, 28));
         title.setForeground(Color.WHITE);
@@ -262,7 +252,7 @@ public class DisplayFrame_Administrator extends JFrame {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         topPanel.setBackground(Color.WHITE);
 
-        btnAddDrug = new JButton("新增药品");
+        btnAddDrug = new JButton("添加药品");
         btnAddDrug.setForeground(Color.BLACK);
         btnAddDrug.setFont(font.ft);
         btnAddDrug.addActionListener(new ActionListener() {
@@ -320,76 +310,34 @@ public class DisplayFrame_Administrator extends JFrame {
 
 
 
+    private JPanel initUsermTable(){
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.add("患者管理", initPatientTable(UserDao.));
+        tabbedPane.add("医生管理", initDoctorTable(UserDao.));
+        tabbedPane.add("管理员管理", initAdminTable(UserDao.));
+        panel.add(tabbedPane);
+
+        return panel;
+    }
 
 
-    private JPanel initUsermTable() {
+
+
+    private JPanel initDoctorTable(List<User> list) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
-
-        JLabel titleLabel = new JLabel("用户管理");
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
-        titleLabel.setFont(new Font("null", Font.BOLD, 22));
-        panel.add(titleLabel, BorderLayout.NORTH);
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         topPanel.setBackground(Color.WHITE);
 
-        btnAddDoctor = new JButton("+ 新增医护账号");
-        btnAddDoctor.setPreferredSize(new Dimension(150, 35));
-        btnAddDoctor.setBackground(new Color(70, 130, 180));
-        btnAddDoctor.setForeground(Color.WHITE);
+        btnAddDoctor = new JButton("添加医生账号");
         btnAddDoctor.setFont(font.ft);
-        btnAddDoctor.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JDialog dialog = new JDialog(DisplayFrame_Administrator.this, "新增医护账号", true);
-                dialog.setSize(350, 200);
-                dialog.setLocationRelativeTo(DisplayFrame_Administrator.this);
-
-                JPanel dPanel = new JPanel(new GridBagLayout());
-                GridBagConstraints gbc = new GridBagConstraints();
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                gbc.insets = new Insets(5, 10, 5, 10);
-
-                gbc.gridx = 0; gbc.gridy = 0;
-                dPanel.add(new JLabel("用户名："), gbc);
-                gbc.gridx = 1;
-                JTextField userField = new JTextField(15);
-                dPanel.add(userField, gbc);
-
-                gbc.gridx = 0; gbc.gridy = 1;
-                dPanel.add(new JLabel("密码："), gbc);
-                gbc.gridx = 1;
-                JPasswordField passField = new JPasswordField(15);
-                dPanel.add(passField, gbc);
-
-                gbc.gridx = 0; gbc.gridy = 2;
-                gbc.gridwidth = 2;
-                gbc.anchor = GridBagConstraints.CENTER;
-                JButton btnCreate = new JButton("创建");
-                btnCreate.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent ev) {
-                        JOptionPane.showMessageDialog(dialog, "医护账号创建成功");
-                        dialog.dispose();
-                    }
-                });
-                dPanel.add(btnCreate, gbc);
-
-                dialog.add(dPanel);
-                dialog.setVisible(true);
-            }
-        });
 
         topPanel.add(btnAddDoctor);
 
-        String[] userColumns = {"用户名", "角色", "状态", "操作"};
-        userTable = new JTable(userData, userColumns) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+        JTable userTable = new JTable(new Dmodel(list));
 
         userTable.setRowHeight(35);
         userTable.getTableHeader().setReorderingAllowed(false);
@@ -397,47 +345,31 @@ public class DisplayFrame_Administrator extends JFrame {
         userTable.getColumnModel().getColumn(0).setPreferredWidth(120);
         userTable.getColumnModel().getColumn(1).setPreferredWidth(80);
         userTable.getColumnModel().getColumn(2).setPreferredWidth(80);
-        userTable.getColumnModel().getColumn(3).setPreferredWidth(120);
         userTable.getColumnModel().getColumn(3).setCellRenderer(new BtnRenderer());
+        userTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
+        userTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
 
         userTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = userTable.columnAtPoint(e.getPoint());
                 int row = userTable.rowAtPoint(e.getPoint());
+                Dmodel dm = (Dmodel)userTable.getModel();
+                User u = dm.getUserrow(row);
                 if (col == 3) {
-                    String username = userData[row][0];
-                    String currentStatus = userData[row][2];
-                    String[] options;
-                    if ("正常".equals(currentStatus)) {
-                        options = new String[]{"禁用", "删除"};
-                    } else {
-                        options = new String[]{"启用", "删除"};
-                    }
-                    int choice = JOptionPane.showOptionDialog(panel,
-                            "用户：" + username,
-                            "操作", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-                    if (choice >= 0) {
-                        if ("删除".equals(options[choice])) {
-                            int confirm = JOptionPane.showConfirmDialog(panel,
-                                    "确定要删除用户「" + username + "」吗？",
-                                    "确认删除", JOptionPane.YES_NO_OPTION);
-                            if (confirm == JOptionPane.YES_OPTION) {
-                                JOptionPane.showMessageDialog(panel, "已删除用户：" + username);
-                            }
-                        } else {
-                            String newStatus = "禁用".equals(options[choice]) ? "禁用" : "正常";
-                            userData[row][2] = newStatus;
-                            JOptionPane.showMessageDialog(panel, "用户「" + username + "」已" + newStatus);
-                            refreshUserTable();
-                        }
-                    }
+                    showDoctorEditDialog(u, dm);
+                } else if (col == 4) {
+                    JOptionPane.showMessageDialog(null, "重置密码:" + u.getName());
+                } else if (col == 5) {
+                    String newStatus = "启用".equals(u.getStatus()) ? "禁用" : "启用";
+                    u.setStatus(newStatus);
+                    JOptionPane.showMessageDialog(null, "医生:" + u.getName() + " 账号已" + newStatus);
+                    dm.fireTableDataChanged();
                 }
             }
         });
 
-        userScrollPane = new JScrollPane(userTable);
+        JScrollPane userScrollPane = new JScrollPane(userTable);
         userScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         userScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -446,21 +378,162 @@ public class DisplayFrame_Administrator extends JFrame {
         return panel;
     }
 
-    private void refreshUserTable() {
-        String[] userColumns = {"用户名", "角色", "状态", "操作"};
-        userTable.setModel(new javax.swing.table.DefaultTableModel(userData, userColumns) {
+    private void showDoctorEditDialog(User u, AbstractTableModel model) {
+        JDialog dialog = new JDialog(this, "编辑资料 - " + u.getName(), true);
+        dialog.setSize(350, 200);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(null);
+
+        JLabel nameLabel = new JLabel("姓名：");
+        nameLabel.setBounds(30, 30, 50, 25);
+        dialog.add(nameLabel);
+
+        JTextField nameField = new JTextField(u.getName());
+        nameField.setBounds(90, 30, 200, 25);
+        dialog.add(nameField);
+
+        JLabel pwdLabel = new JLabel("密码：");
+        pwdLabel.setBounds(30, 70, 50, 25);
+        dialog.add(pwdLabel);
+
+        JTextField pwdField = new JTextField(u.getPwd());
+        pwdField.setBounds(90, 70, 200, 25);
+        dialog.add(pwdField);
+
+        JButton saveBtn = new JButton("保存");
+        saveBtn.setBounds(130, 120, 80, 30);
+        saveBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                u.setName(nameField.getText().trim());
+                u.setPwd(pwdField.getText().trim());
+                JOptionPane.showMessageDialog(dialog, "保存成功");
+                dialog.dispose();
+                model.fireTableDataChanged();
+            }
+        });
+        dialog.add(saveBtn);
+
+        dialog.setVisible(true);
+    }
+
+
+
+
+    private JPanel initPatientTable(List<User> list) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+
+        JTable patientTable = new JTable(new Umodel(list));
+        patientTable.setRowHeight(35);
+        patientTable.getTableHeader().setReorderingAllowed(false);
+        patientTable.getTableHeader().setResizingAllowed(false);
+        patientTable.getColumnModel().getColumn(0).setPreferredWidth(80);
+        patientTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+        patientTable.getColumnModel().getColumn(2).setPreferredWidth(60);
+        patientTable.getColumnModel().getColumn(3).setPreferredWidth(120);
+        patientTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
+        patientTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
+        patientTable.getColumnModel().getColumn(6).setCellRenderer(new BtnRenderer());
+
+        patientTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int col = patientTable.columnAtPoint(e.getPoint());
+                int row = patientTable.rowAtPoint(e.getPoint());
+                Umodel um = (Umodel)patientTable.getModel();
+                User u = um.getUserrow(row);
+                if (col == 4) {
+                    showPatientDetail(u.getName());
+                } else if (col == 5) {
+                    JOptionPane.showMessageDialog(null, "患者:" + u.getName() + " 账号已禁用");
+                } else if (col == 6) {
+                    int confirm = JOptionPane.showConfirmDialog(patientTable,
+                            "确定要删除患者 " + u.getName() + " 吗？",
+                            "确认删除", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        JOptionPane.showMessageDialog(null, "已删除患者：" + u.getName());
+                    }
+                }
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(patientTable);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        panel.add(scrollPane, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private void showPatientDetail(String username) {
+        JDialog dialog = new JDialog(this, "患者详情 - " + username, true);
+        dialog.setSize(500, 300);
+        dialog.setLocationRelativeTo(this);
+
+        String[][] data = {};
+        String[] columns = {"药品", "症状", "时间", "状态"};
+        JTable table = new JTable(data, columns) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
-        });
-        DefaultTableCellRenderer r = new DefaultTableCellRenderer();
-        r.setHorizontalAlignment(SwingConstants.CENTER);
-        for (int i = 0; i < userTable.getColumnCount(); i++) {
-            userTable.getColumnModel().getColumn(i).setCellRenderer(r);
-        }
-        userTable.getColumnModel().getColumn(3).setCellRenderer(new BtnRenderer());
+        };
+        table.setRowHeight(30);
+        table.getTableHeader().setReorderingAllowed(false);
+
+        JPanel content = new JPanel(new BorderLayout());
+        content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        content.add(new JLabel("反馈记录", SwingConstants.LEFT), BorderLayout.NORTH);
+        content.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        dialog.add(content);
+        dialog.setVisible(true);
     }
+
+
+
+
+    private JPanel initAdminTable(List<User> list) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+
+        JTable adminTable = new JTable(new Amodel(list));
+        adminTable.setRowHeight(35);
+        adminTable.getTableHeader().setReorderingAllowed(false);
+        adminTable.getTableHeader().setResizingAllowed(false);
+        adminTable.getColumnModel().getColumn(0).setPreferredWidth(120);
+        adminTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+        adminTable.getColumnModel().getColumn(2).setCellRenderer(new BtnRenderer());
+        adminTable.getColumnModel().getColumn(3).setCellRenderer(new BtnRenderer());
+
+        adminTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int col = adminTable.columnAtPoint(e.getPoint());
+                int row = adminTable.rowAtPoint(e.getPoint());
+                Amodel am = (Amodel)adminTable.getModel();
+                User u = am.getUserrow(row);
+                if (col == 2) {
+                    JOptionPane.showMessageDialog(null, "管理员:" + u.getName() + " 账号已禁用");
+                } else if (col == 3) {
+                    int confirm = JOptionPane.showConfirmDialog(adminTable,
+                            "确定要删除管理员 " + u.getName() + " 吗？",
+                            "确认删除", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        JOptionPane.showMessageDialog(null, "已删除管理员：" + u.getName());
+                    }
+                }
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(adminTable);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        panel.add(scrollPane, BorderLayout.CENTER);
+        return panel;
+    }
+
+
 
 
     private JPanel initFeedbackmTable() {
@@ -472,7 +545,7 @@ public class DisplayFrame_Administrator extends JFrame {
         titleLabel.setFont(new Font("null", Font.BOLD, 22));
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        String[] fbColumns = {"药品", "症状", "患者", "时间", "状态", "操作"};
+        String[] fbColumns = {"药品", "症状", "用户", "时间", "状态", "操作"};
         feedbackTable = new JTable(feedbackData, fbColumns) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -498,7 +571,7 @@ public class DisplayFrame_Administrator extends JFrame {
                 int row = feedbackTable.rowAtPoint(e.getPoint());
                 if (col == 5) {
                     int confirm = JOptionPane.showConfirmDialog(panel,
-                            "确定要删除这条反馈记录吗？药品：" + feedbackData[row][0],
+                            "确定要删除该反馈记录？药品：" + feedbackData[row][0],
                             "确认删除", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         JOptionPane.showMessageDialog(panel, "已删除反馈记录");

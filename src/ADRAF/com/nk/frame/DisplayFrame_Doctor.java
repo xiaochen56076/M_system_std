@@ -325,8 +325,8 @@ public class DisplayFrame_Doctor extends JFrame {
                 int row = recordQueryTable.rowAtPoint(e.getPoint());
                 int col = recordQueryTable.columnAtPoint(e.getPoint());
                 if(col == 5){
-                    Rmodel drm = (Rmodel) recordQueryTable.getModel();
-                    Records r = drm.getRecordrow(row);
+                    Rmodel rm = (Rmodel) recordQueryTable.getModel();
+                    Records r = rm.getRecordrow(row);
                     new RecDialog(r);
                 }
             }

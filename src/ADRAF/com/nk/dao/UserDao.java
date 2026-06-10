@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 
@@ -147,6 +149,29 @@ public class UserDao {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "数据库异常！" + ex.getMessage());
             return;
+        }
+    }
+
+
+
+    public static List<User> getAllUser() {
+        Connection conn = null;
+        List<User> users = new ArrayList<>();
+        try {
+            conn = Dao.getConn(); // 获得数据库连接
+            // 创建PreparedStatement对象，并传递SQL语句
+            PreparedStatement ps = conn.prepareStatement("select username, password, status from ad_user where role = 2");
+            ResultSet rs = ps.executeQuery(); // 执行SQL语句，获得查询结果集
+            while (rs.next() && rs.getRow() > 0) { // 查询到用户信息
+                users.add(new User(rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("status")));
+            }
+            return users;
+        }
+        catch (Exception e){
+            System.out.println("");
+            return null;
         }
     }
 }
