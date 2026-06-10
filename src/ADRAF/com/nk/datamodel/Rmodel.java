@@ -12,7 +12,7 @@ import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 public class Rmodel extends AbstractTableModel {
-    private String[] header = {"药品名称", "不良反应", "用药时间", "记录时间", "审核状态", ""};
+    private String[] header = {"药品名称", "不良反应描述", "用药时间（天）", "上报时间", "审核状态", ""};
     private List<Records> rdata;
 
     public Rmodel(List<Records> list) {

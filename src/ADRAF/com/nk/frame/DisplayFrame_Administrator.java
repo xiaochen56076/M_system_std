@@ -2,6 +2,8 @@ package ADRAF.com.nk.frame;
 
 import ADRAF.com.nk.bean.Medicine;
 import ADRAF.com.nk.dao.MedicineDao;
+import ADRAF.com.nk.datamodel.DMmodel;
+import ADRAF.com.nk.datamodel.DRmodel;
 import ADRAF.com.nk.datamodel.Mmodel;
 import ADRAF.com.nk.tool.MmDialog;
 import ADRAF.com.nk.tool.font;
@@ -9,6 +11,7 @@ import ADRAF.com.nk.tool.font;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,8 +35,8 @@ public class DisplayFrame_Administrator extends JFrame {
     private CardLayout cardLayout;
     private JPanel cardpaanel;
 
-    private JTable mgmtTable;
-    private JScrollPane mgmtScrollPane;
+    private JTable memTable;
+    private JScrollPane memScrollPane;
     private JButton btnAddDrug;
 
     private JTable userTable;
@@ -123,12 +126,12 @@ public class DisplayFrame_Administrator extends JFrame {
         querypage.setLayout(new BorderLayout());
         querypage.add(inittable(MedicineDao.getAllmedicine()));
 
-        JPanel mgmtpage = initDrugMgmtPanel();
-        JPanel userpage = initUserMgmtPanel();
-        JPanel feedbackpage = initFeedbackMgmtPanel();
+        JPanel mgmtpage = initMemTable();
+        JPanel userpage = initUsermTable();
+        JPanel feedbackpage = initFeedbackmTable();
 
         cardpaanel.add(querypage, "query");
-        cardpaanel.add(mgmtpage, "mgmt");
+        cardpaanel.add(mgmtpage, "mem");
         cardpaanel.add(userpage, "user");
         cardpaanel.add(feedbackpage, "feedback");
 
@@ -146,7 +149,7 @@ public class DisplayFrame_Administrator extends JFrame {
         btn2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardpaanel, "mgmt");
+                cardLayout.show(cardpaanel, "mem");
             }
         });
         btn3.addActionListener(new ActionListener() {
@@ -243,8 +246,10 @@ public class DisplayFrame_Administrator extends JFrame {
         }
     }
 
-    // ===================== 药品管理 =====================
-    private JPanel initDrugMgmtPanel() {
+
+
+
+    private JPanel initMemTable() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
@@ -256,156 +261,67 @@ public class DisplayFrame_Administrator extends JFrame {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         topPanel.setBackground(Color.WHITE);
 
-        btnAddDrug = new JButton("+ 新增药品");
-        btnAddDrug.setPreferredSize(new Dimension(120, 35));
-        btnAddDrug.setBackground(new Color(60, 179, 113));
-        btnAddDrug.setForeground(Color.WHITE);
+        btnAddDrug = new JButton("新增药品");
+        btnAddDrug.setForeground(Color.BLACK);
         btnAddDrug.setFont(font.ft);
         btnAddDrug.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showDrugEditDialog(null);
+//                showDrugEditDialog(null);
             }
         });
         topPanel.add(btnAddDrug);
 
-        List<Medicine> allMeds = MedicineDao.getAllmedicine();
-        String[] mgmtColumns = {"药品名", "常见不良反应", "禁忌", "操作"};
-        Object[][] mgmtData = new Object[allMeds.size()][4];
-        for (int i = 0; i < allMeds.size(); i++) {
-            Medicine m = allMeds.get(i);
-            mgmtData[i][0] = m.getName();
-            mgmtData[i][1] = m.getAdverseReaction();
-            mgmtData[i][2] = m.getContraindication();
-            mgmtData[i][3] = "修改/删除";
-        }
 
-        mgmtTable = new JTable(mgmtData, mgmtColumns) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+        memTable = new JTable(new DMmodel(MedicineDao.getAllmedicine()));
+        memstyle();
 
-        mgmtTable.setRowHeight(35);
-        mgmtTable.getTableHeader().setReorderingAllowed(false);
-        mgmtTable.getTableHeader().setResizingAllowed(false);
-        mgmtTable.getColumnModel().getColumn(0).setPreferredWidth(120);
-        mgmtTable.getColumnModel().getColumn(1).setPreferredWidth(250);
-        mgmtTable.getColumnModel().getColumn(2).setPreferredWidth(200);
-        mgmtTable.getColumnModel().getColumn(3).setPreferredWidth(100);
-        mgmtTable.getColumnModel().getColumn(3).setCellRenderer(new BtnRenderer());
-
-        List<Medicine> medRef = allMeds;
-        mgmtTable.addMouseListener(new MouseAdapter() {
+        memTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int col = mgmtTable.columnAtPoint(e.getPoint());
-                int row = mgmtTable.rowAtPoint(e.getPoint());
-                if (col == 3) {
-                    String[] options = {"修改", "删除"};
-                    int choice = JOptionPane.showOptionDialog(panel,
-                            "药品：" + mgmtTable.getValueAt(row, 0),
-                            "操作", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-                    if (choice == 0) {
-                        showDrugEditDialog(medRef.get(row));
-                    } else if (choice == 1) {
-                        int confirm = JOptionPane.showConfirmDialog(panel,
-                                "确定要删除「" + mgmtTable.getValueAt(row, 0) + "」吗？",
-                                "确认删除", JOptionPane.YES_NO_OPTION);
-                        if (confirm == JOptionPane.YES_OPTION) {
-                            JOptionPane.showMessageDialog(panel, "已删除：" + mgmtTable.getValueAt(row, 0));
-                        }
-                    }
+                int col = memTable.columnAtPoint(e.getPoint());
+                int row = memTable.rowAtPoint(e.getPoint());
+                if (col == 4) {
+                    System.out.println("test");
+                }
+                else if(col == 5){
+                    System.out.println("test1");
                 }
             }
         });
 
-        mgmtScrollPane = new JScrollPane(mgmtTable);
-        mgmtScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        mgmtScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        memScrollPane = new JScrollPane(memTable);
+        memScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        memScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         panel.add(topPanel, BorderLayout.NORTH);
-        panel.add(mgmtScrollPane, BorderLayout.CENTER);
+        panel.add(memScrollPane, BorderLayout.CENTER);
         return panel;
     }
 
-    private void showDrugEditDialog(Medicine medicine) {
-        boolean isNew = (medicine == null);
-        JDialog dialog = new JDialog(this, isNew ? "新增药品" : "修改药品", true);
-        dialog.setSize(450, 300);
-        dialog.setLocationRelativeTo(this);
-
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 10, 5, 10);
-
-        gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(new JLabel("药品名："), gbc);
-        gbc.gridx = 1;
-        JTextField nameField = new JTextField(20);
-        if (!isNew) nameField.setText(medicine.getName());
-        panel.add(nameField, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 1;
-        panel.add(new JLabel("常见不良反应："), gbc);
-        gbc.gridx = 1;
-        JTextField adverseField = new JTextField(20);
-        if (!isNew) adverseField.setText(medicine.getAdverseReaction());
-        panel.add(adverseField, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 2;
-        panel.add(new JLabel("禁忌："), gbc);
-        gbc.gridx = 1;
-        JTextArea contraArea = new JTextArea(3, 20);
-        contraArea.setLineWrap(true);
-        contraArea.setWrapStyleWord(true);
-        if (!isNew) contraArea.setText(medicine.getContraindication());
-        JScrollPane csp = new JScrollPane(contraArea);
-        csp.setPreferredSize(new Dimension(250, 60));
-        panel.add(csp, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        JPanel btnPanel = new JPanel(new FlowLayout());
-
-        JButton btnSave = new JButton("保存");
-        btnSave.setBackground(new Color(60, 179, 113));
-        btnSave.setForeground(Color.WHITE);
-        btnSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (nameField.getText().trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(dialog, "药品名不能为空");
-                    return;
-                }
-                JOptionPane.showMessageDialog(dialog,
-                        isNew ? "新增药品成功" : "修改药品成功");
-                dialog.dispose();
-            }
-        });
-
-        JButton btnCancel = new JButton("取消");
-        btnCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
-
-        btnPanel.add(btnSave);
-        btnPanel.add(btnCancel);
-        panel.add(btnPanel, gbc);
-
-        dialog.add(panel);
-        dialog.setVisible(true);
+    private void memstyle() {
+        memTable.setRowHeight(35);
+        memTable.getTableHeader().setReorderingAllowed(false);
+        memTable.getTableHeader().setResizingAllowed(false);
+        memTable.getColumnModel().getColumn(0).setPreferredWidth(120);
+        memTable.getColumnModel().getColumn(1).setPreferredWidth(250);
+        memTable.getColumnModel().getColumn(2).setPreferredWidth(200);
+        memTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+        memTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
+        memTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
     }
 
-    // ===================== 用户管理 =====================
-    private JPanel initUserMgmtPanel() {
+    private void refreshmemTable(){
+        memTable.setModel(new Mmodel(MedicineDao.getAllmedicine()));
+        memstyle();
+    }
+
+
+
+
+
+
+    private JPanel initUsermTable() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
@@ -545,8 +461,8 @@ public class DisplayFrame_Administrator extends JFrame {
         userTable.getColumnModel().getColumn(3).setCellRenderer(new BtnRenderer());
     }
 
-    // ===================== 反馈管理 =====================
-    private JPanel initFeedbackMgmtPanel() {
+
+    private JPanel initFeedbackmTable() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 

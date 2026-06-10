@@ -5,7 +5,7 @@ import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 public class DRmodel extends AbstractTableModel {
-    private final String[] header = {"药品名称", "不良反应", "用药时间", "记录时间", "审核状态", "", ""};
+    private final String[] header = {"药品名称", "不良反应描述", "用药时间（上报）", "上报时间", "审核状态", "", ""};
     private final List<Records> data;
 
     public DRmodel(List<Records> list) {
