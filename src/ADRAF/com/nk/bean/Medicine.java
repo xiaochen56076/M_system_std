@@ -1,18 +1,28 @@
 package ADRAF.com.nk.bean;
 
 public class Medicine {
-    private String id;
+    private String encoding;
     private String name;
     private String adverseReaction;
     private String contraindication;
 
 
-    public String getId() {
-        return id;
+    public Medicine() {
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public Medicine(String encoding, String name, String adverseReaction, String contraindication) {
+        this.encoding = encoding;
+        this.name = name;
+        this.adverseReaction = adverseReaction;
+        this.contraindication = contraindication;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     public String getName() {

@@ -20,7 +20,7 @@ public class MmDialog extends JDialog {
         JLabel lbl1 = new JLabel("¹úÒ©×¼×Ö£º");
         lbl1.setBounds(20, 20, 70, 25);
         add(lbl1);
-        JLabel val1 = new JLabel(mm.getId());
+        JLabel val1 = new JLabel(mm.getEncoding());
         val1.setBounds(100, 20, 310, 25);
         add(val1);
 

@@ -5,6 +5,7 @@ import ADRAF.com.nk.dao.MedicineDao;
 import ADRAF.com.nk.datamodel.DMmodel;
 import ADRAF.com.nk.datamodel.DRmodel;
 import ADRAF.com.nk.datamodel.Mmodel;
+import ADRAF.com.nk.tool.AddMmDialog;
 import ADRAF.com.nk.tool.MmDialog;
 import ADRAF.com.nk.tool.font;
 
@@ -43,19 +44,19 @@ public class DisplayFrame_Administrator extends JFrame {
     private JScrollPane userScrollPane;
     private JButton btnAddDoctor;
     private String[][] userData = {
-            {"张三", "患者", "正常"},
-            {"李四", "患者", "正常"},
-            {"王五", "患者", "禁用"},
-            {"李医生", "医护", "正常"}
+            {"张三", "患者", "正常",""},
+            {"李四", "患者", "正常", ""},
+            {"王五", "患者", "禁用", ""},
+            {"李医生", "医护", "正常", ""}
     };
 
     private JTable feedbackTable;
     private JScrollPane feedbackScrollPane;
     private String[][] feedbackData = {
-            {"阿莫西林", "皮疹", "张三", "01-15", "已通过"},
-            {"布洛芬", "胃痛", "李四", "01-16", "待审核"},
-            {"头孢拉定", "腹泻", "王五", "01-18", "已通过"},
-            {"阿司匹林", "出血", "赵六", "01-20", "待审核"}
+            {"阿莫西林", "皮疹", "张三", "01-15", "已通过", ""},
+            {"布洛芬", "胃痛", "李四", "01-16", "待审核", ""},
+            {"头孢拉定", "腹泻", "王五", "01-18", "已通过", ""},
+            {"阿司匹林", "出血", "赵六", "01-20", "待审核", ""}
     };
 
     public DisplayFrame_Administrator() {
@@ -267,7 +268,7 @@ public class DisplayFrame_Administrator extends JFrame {
         btnAddDrug.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                showDrugEditDialog(null);
+                new AddMmDialog();
             }
         });
         topPanel.add(btnAddDrug);

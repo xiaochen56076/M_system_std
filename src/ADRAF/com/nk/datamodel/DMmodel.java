@@ -38,7 +38,7 @@ public class DMmodel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         Medicine m = data.get(row);
         switch (col) {
-            case 0: return m.getId();
+            case 0: return m.getEncoding();
             case 1: return m.getName();
             case 2: return m.getAdverseReaction();
             case 3: return m.getContraindication();
