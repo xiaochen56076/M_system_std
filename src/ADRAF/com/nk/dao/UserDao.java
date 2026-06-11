@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
 
@@ -84,11 +84,16 @@ public class UserDao {
                 JOptionPane.showMessageDialog(null, "验证码错误");
                 return false;
             }
+            if (UserDao.isUsernameExists(user.getName())) {
+                JOptionPane.showMessageDialog(null, "该用户名已存在");
+                return false;
+            }
+
 
             conn = Dao.getConn(); // 获得数据库连接
             // 创建PreparedStatement对象，并传递SQL语句
             PreparedStatement ps = conn
-                    .prepareStatement("insert into ad_user (username,password, allergy, role)  values(?,?,?,?)");
+                    .prepareStatement("insert into ad_user (username,password, allergy, role)  values(?,?,?,1)");
             ps.setString(1, username.trim()); // 为参数赋值
             ps.setString(2, pwd.trim());
             ps.setString(3, allergy.trim());
@@ -115,6 +120,94 @@ public class UserDao {
         }
     }
 
+
+    public static boolean isUsernameExists(String username) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = Dao.getConn();
+            ps = conn.prepareStatement("SELECT COUNT(*) FROM ad_user WHERE username = ?");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+
+            }
+        }
+        return false;
+    }
+
+    public static boolean isAccountDisabled(String username) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = Dao.getConn();
+            ps = conn.prepareStatement("SELECT status FROM ad_user WHERE username = ?");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String status = rs.getString("status");
+                return "禁用".equals(status);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public static boolean adminInsertUser(User user) {
+
+        if (user.getName().isEmpty() || user.getPwd().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "用户名和密码不能为空");
+            return false;
+        }
+        if (UserDao.isUsernameExists(user.getName())) {
+            JOptionPane.showMessageDialog(null, "该用户名已存在");
+            return false;
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = Dao.getConn();
+            ps = conn.prepareStatement("INSERT INTO ad_user (username, password, role) VALUES (?, ?, ?)");
+            ps.setString(1, user.getName());
+            ps.setString(2, user.getPwd());
+            ps.setString(3, user.getRole());
+            int flag = ps.executeUpdate();
+            return flag > 0;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
     public static void updateUser(String oldPwd, String newPwd, String okPwd) {
         try {
@@ -202,7 +295,7 @@ public class UserDao {
         try {
             conn = Dao.getConn(); // 获得数据库连接
             // 创建PreparedStatement对象，并传递SQL语句
-            PreparedStatement ps = conn.prepareStatement("select username, password, status from ad_user where role = 3 or role = 4");
+            PreparedStatement ps = conn.prepareStatement("select username, password, status, role from ad_user where role = 3 or role = 4");
             ResultSet rs = ps.executeQuery(); // 执行SQL语句，获得查询结果集
             while (rs.next()) { // 查询到用户信息
                 User u = new User(rs.getString(1),
@@ -240,7 +333,7 @@ public class UserDao {
         }
     }
 
-    public static void setRole(User user) {
+    public static void setStatus(User user) {
         try {
             Connection conn = Dao.getConn();
             PreparedStatement ps1 = conn.prepareStatement("update ad_user set status = ? where username = ? and role = ?");
@@ -305,36 +398,6 @@ public class UserDao {
         }
 
 
-    }
-
-    public static boolean isUsernameExists(String username,int role) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = Dao.getConn();
-            ps = conn.prepareStatement("SELECT COUNT(*) FROM ad_user WHERE username = ? AND role = ?");
-            ps.setString(1, username);
-            ps.setInt(2, role);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (Exception e) {
-
-            }
-        }
-        return false;
     }
 }
 

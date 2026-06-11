@@ -7,7 +7,6 @@ import ADRAF.com.nk.dao.MedicineDao;
 import ADRAF.com.nk.dao.RecordDao;
 import ADRAF.com.nk.dao.UserDao;
 import ADRAF.com.nk.datamodel.*;
-import ADRAF.com.nk.tool.AddMmDialog;
 import ADRAF.com.nk.tool.MmDialog;
 import ADRAF.com.nk.tool.font;
 
@@ -277,8 +276,7 @@ public class DisplayFrame_Administrator extends JFrame {
         btnAddDrug.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new AddMmDialog(DisplayFrame_Administrator.this);
-                refreshmemTable(MedicineDao.getAllmedicine());
+                showAddMedicineDialog();
             }
         });
         topPanel.add(btnAddDrug);
@@ -297,8 +295,12 @@ public class DisplayFrame_Administrator extends JFrame {
                     showEditMedicineDialog(m);
                 }
                 else if(col == 5){
-                    MedicineDao.deleteMedicine(m);
-                    refreshmemTable(MedicineDao.getAllmedicine());
+                    int confirm = JOptionPane.showConfirmDialog(patientTable, "确定要删除药品 " + m.getName() + " 吗？", "确认删除", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        MedicineDao.deleteMedicine(m);
+                        refreshmemTable(MedicineDao.getAllmedicine());
+                        JOptionPane.showMessageDialog(null, "删除成功");
+                    }
                 }
             }
         });
@@ -375,9 +377,9 @@ public class DisplayFrame_Administrator extends JFrame {
                 m.setAdverseReaction(adverseArea.getText().trim());
                 m.setContraindication(contraArea.getText().trim());
                 MedicineDao.updateMedicine(m);
+                refreshmemTable(MedicineDao.getAllmedicine());
                 JOptionPane.showMessageDialog(dialog, "修改成功");
                 dialog.dispose();
-                refreshmemTable(MedicineDao.getAllmedicine());
             }
         });
         dialog.add(saveBtn);
@@ -394,6 +396,92 @@ public class DisplayFrame_Administrator extends JFrame {
 
         dialog.setVisible(true);
     }
+
+    private void showAddMedicineDialog() {
+        JDialog dialog = new JDialog(this, "添加药品", true);
+        dialog.setSize(450, 320);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(null);
+        dialog.setResizable(false);
+
+        JLabel nameLabel = new JLabel("药品名称：");
+        nameLabel.setBounds(20, 20, 80, 25);
+        dialog.add(nameLabel);
+
+        JTextField nameField = new JTextField();
+        nameField.setBounds(110, 20, 300, 25);
+        dialog.add(nameField);
+
+        JLabel codeLabel = new JLabel("国字号：");
+        codeLabel.setBounds(20, 60, 80, 25);
+        dialog.add(codeLabel);
+
+        JTextField codeField = new JTextField();
+        codeField.setBounds(110, 60, 300, 25);
+        dialog.add(codeField);
+
+        JLabel adverseLabel = new JLabel("不良反应：");
+        adverseLabel.setBounds(20, 100, 80, 25);
+        dialog.add(adverseLabel);
+
+        JTextArea adverseArea = new JTextArea();
+        adverseArea.setLineWrap(true);
+        adverseArea.setWrapStyleWord(true);
+        JScrollPane adverseScroll = new JScrollPane(adverseArea);
+        adverseScroll.setBounds(110, 100, 300, 60);
+        dialog.add(adverseScroll);
+
+        JLabel contraLabel = new JLabel("禁忌：");
+        contraLabel.setBounds(20, 175, 80, 25);
+        dialog.add(contraLabel);
+
+        JTextArea contraArea = new JTextArea();
+        contraArea.setLineWrap(true);
+        contraArea.setWrapStyleWord(true);
+        JScrollPane contraScroll = new JScrollPane(contraArea);
+        contraScroll.setBounds(110, 175, 300, 60);
+        dialog.add(contraScroll);
+
+        JButton saveBtn = new JButton("添加");
+        saveBtn.setBounds(150, 250, 80, 30);
+        saveBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = nameField.getText().trim();
+                String code = codeField.getText().trim();
+                String adverse = adverseArea.getText().trim();
+                String contra = contraArea.getText().trim();
+
+                if (name.isEmpty() || code.isEmpty()) {
+                    JOptionPane.showMessageDialog(dialog, "药品名称和国字号不能为空");
+                    return;
+                }
+
+                Medicine m = new Medicine(code, name, adverse, contra);
+                if (MedicineDao.insertMedicine(m)) {
+                    JOptionPane.showMessageDialog(dialog, "添加成功");
+                    refreshmemTable(MedicineDao.getAllmedicine());
+                    dialog.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(dialog, "添加失败，请检查国字号是否重复");
+                }
+            }
+        });
+        dialog.add(saveBtn);
+
+        JButton cancelBtn = new JButton("取消");
+        cancelBtn.setBounds(250, 250, 80, 30);
+        cancelBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+        dialog.add(cancelBtn);
+
+        dialog.setVisible(true);
+    }
+
 
 
 
@@ -448,7 +536,7 @@ public class DisplayFrame_Administrator extends JFrame {
                     String newStatus = "启用".equals(u.getStatus()) ? "禁用" : "启用";
                     u.setStatus(newStatus);
                     JOptionPane.showMessageDialog(null, "医生:" + u.getName() + " 账号已" + newStatus);
-                    UserDao.setRole(u);
+                    UserDao.setStatus(u);
                 }
                 dm.fireTableDataChanged();
             }
@@ -553,22 +641,19 @@ public class DisplayFrame_Administrator extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String name = userField.getText().trim();
                 String pwd = new String(pwdField.getPassword()).trim();
-                if (name.isEmpty() || pwd.isEmpty()) {
-                    JOptionPane.showMessageDialog(dialog, "用户名和密码不能为空");
-                    return;
-                }
-                if (UserDao.isUsernameExists(name, 2)) {
-                    JOptionPane.showMessageDialog(dialog, "该用户名已存在");
-                    return;
-                }
+
                 User newUser = new User();
                 newUser.setName(name);
                 newUser.setPwd(pwd);
                 newUser.setRole("2");
-                UserDao.insertUser(newUser, "");
+                if (UserDao.adminInsertUser(newUser)) {
+                    refreshDoctorTable();
+                    JOptionPane.showMessageDialog(null, "添加成功");
+                    dialog.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(dialog, "添加失败，请重试");
+                }
                 refreshDoctorTable();
-                JOptionPane.showMessageDialog(dialog, "添加成功");
-                dialog.dispose();
             }
         });
         dialog.add(saveBtn);
@@ -611,7 +696,7 @@ public class DisplayFrame_Administrator extends JFrame {
                     String newStatus = "启用".equals(u.getStatus()) ? "禁用" : "启用";
                     u.setStatus(newStatus);
                     JOptionPane.showMessageDialog(null, "患者:" + u.getName() + " 账号已" + newStatus);
-                    UserDao.setRole(u);
+                    UserDao.setStatus(u);
                     um.fireTableDataChanged();
 
                 } else if (col == 6) {
@@ -730,7 +815,7 @@ public class DisplayFrame_Administrator extends JFrame {
                     String newStatus = "禁用".equals(u.getStatus()) ? "启用" : "禁用";
                     u.setStatus(newStatus);
                     JOptionPane.showMessageDialog(null, "管理员:" + u.getName() + " 账号已" + newStatus);
-                    UserDao.setRole(u);
+                    UserDao.setStatus(u);
                     am.fireTableDataChanged();
                 } else if (col == 4) {
                     int confirm = JOptionPane.showConfirmDialog(adminTable, "确定要删除管理员 " + u.getName() + " 吗？", "确认删除", JOptionPane.YES_NO_OPTION);
@@ -815,7 +900,7 @@ public class DisplayFrame_Administrator extends JFrame {
                     JOptionPane.showMessageDialog(dialog, "用户名和密码不能为空");
                     return;
                 }
-                if (UserDao.isUsernameExists(name, 3)) {
+                if (UserDao.isUsernameExists(name)){
                     JOptionPane.showMessageDialog(dialog, "该用户名已存在");
                     return;
                 }
@@ -823,7 +908,13 @@ public class DisplayFrame_Administrator extends JFrame {
                 newUser.setName(name);
                 newUser.setPwd(pwd);
                 newUser.setRole("3");
-                UserDao.insertUser(newUser, "");
+                if (UserDao.adminInsertUser(newUser)) {
+                    refreshDoctorTable();
+                    JOptionPane.showMessageDialog(null, "添加成功");
+                    dialog.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(dialog, "添加失败，请重试");
+                }
                 refreshAdminTable(UserDao.getAuser());
             }
         });

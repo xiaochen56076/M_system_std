@@ -127,11 +127,11 @@ public class LoginFrame_Fir extends JFrame {
         User user = new User();
         user.setName(name);
         user.setPwd(password);
-        if (UserDao.isUsernameExists(usertext.getText().trim(), 2)) {
-            JOptionPane.showMessageDialog(null, "该用户名已存在");
+        boolean bool = UserDao.userLogin(user);
+        if(UserDao.isAccountDisabled(user.getName())){
+            JOptionPane.showMessageDialog(null, "该账号已禁用，请联系管理员");
             return;
         }
-        boolean bool = UserDao.userLogin(user);
         if(bool && UserStateTool.getRight() == 1){
             new DisplayFrame_Patient();
             dispose();
@@ -144,8 +144,6 @@ public class LoginFrame_Fir extends JFrame {
             new DisplayFrame_Administrator();
             dispose();
         }
-
-
     }
 
 

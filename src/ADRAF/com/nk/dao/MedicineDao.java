@@ -60,21 +60,18 @@ public class MedicineDao {
             ps.setString(3, m.getAdverseReaction());
             ps.setString(4, m.getContraindication());
             int flag = ps.executeUpdate();
-            if (flag > 0) {
-//                UserStateTool.setRight(1);
-                JOptionPane.showMessageDialog(null, "添加成功");
-                return true;
-            } else {
-                JOptionPane.showMessageDialog(null, "添加成功");
-                return false;
-            }
+            return flag > 0;
         }catch (Exception e){
             JOptionPane.showMessageDialog(null, "错误");
             return false;
         } finally {
             try {
-                if (ps != null) ps.close();
-                if (conn != null) conn.close();
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -125,12 +122,6 @@ public class MedicineDao {
             ps = conn.prepareStatement("delete from ad_medicine where name = ?");
             ps.setString(1, m.getName());
             int flag = ps.executeUpdate();
-            if(flag > 0){
-                JOptionPane.showMessageDialog(null, "删除成功");
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "删除失败");
-            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {

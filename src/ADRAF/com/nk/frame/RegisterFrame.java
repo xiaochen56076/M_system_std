@@ -229,9 +229,16 @@ public class RegisterFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 User user = new User(usertext.getText().trim(), new String(pwktext.getPassword()), new String(okpwdtext.getPassword()), altext.getText().trim());
-                if(UserDao.insertUser(user, vcode.getText().trim())){
+
+                if((!UserDao.isUsernameExists(user.getName())) && UserDao.insertUser(user, vcode.getText().trim())){
+                    UserStateTool.setRight(1);
+                    UserStateTool.setUsername(user.getName());
+                    UserStateTool.setPassword(user.getPwd());
                     DisplayFrame_Patient dfv = new DisplayFrame_Patient();
                     dispose();
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "该用户名已存在");
                 }
             }
         });
