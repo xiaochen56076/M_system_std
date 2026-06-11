@@ -21,36 +21,36 @@ public class UserDao {
         try {
             String username = user.getName();
             String pwd = user.getPwd();
-            if(username.isEmpty() || pwd.isEmpty()){
-                JOptionPane.showMessageDialog(null, "ç”¨æˆ·åæˆ–å¯†ç ä¸èƒ½ä¸ºç©º");
+            if (username.isEmpty() || pwd.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "ÓÃ»§Ãû»òÃÜÂë²»ÄÜÎª¿Õ");
                 return false;
             }
 
-            conn = Dao.getConn(); // è·å¾—æ•°æ®åº“è¿æ¥
-            // åˆ›å»ºPreparedStatementå¯¹è±¡ï¼Œå¹¶ä¼ é€’SQLè¯­å¥
+            conn = Dao.getConn(); // »ñµÃÊı¾İ¿âÁ¬½Ó
+            // ´´½¨PreparedStatement¶ÔÏó£¬²¢´«µİSQLÓï¾ä
             PreparedStatement ps = conn
                     .prepareStatement("select password, role from ad_user where username=?");
-            ps.setString(1, username); // ä¸ºå‚æ•°èµ‹å€¼
-            ResultSet rs = ps.executeQuery(); // æ‰§è¡ŒSQLè¯­å¥ï¼Œè·å¾—æŸ¥è¯¢ç»“æœé›†
-            if (rs.next()) { // æŸ¥è¯¢åˆ°ç”¨æˆ·ä¿¡æ¯
-                String password = rs.getString(1); // è·å¾—å¯†ç 
-                int right = rs.getInt(2);//è·å–æƒé™
-                if (password.equals(pwd)) {// å¦‚æœå¯†ç ç›¸åŒ
-                    UserStateTool.setUsername(username);// è®°å½•è´¦å·
-                    UserStateTool.setPassword(pwd);// è®°å½•å¯†ç 
+            ps.setString(1, username); // Îª²ÎÊı¸³Öµ
+            ResultSet rs = ps.executeQuery(); // Ö´ĞĞSQLÓï¾ä£¬»ñµÃ²éÑ¯½á¹û¼¯
+            if (rs.next()) { // ²éÑ¯µ½ÓÃ»§ĞÅÏ¢
+                String password = rs.getString(1); // »ñµÃÃÜÂë
+                int right = rs.getInt(2);//»ñÈ¡È¨ÏŞ
+                if (password.equals(pwd)) {// Èç¹ûÃÜÂëÏàÍ¬
+                    UserStateTool.setUsername(username);// ¼ÇÂ¼ÕËºÅ
+                    UserStateTool.setPassword(pwd);// ¼ÇÂ¼ÃÜÂë
                     UserStateTool.setRight(right);
-                    return true; // å¯†ç æ­£ç¡®è¿”å›true
+                    return true; // ÃÜÂëÕıÈ··µ»Øtrue
                 } else {
-                    JOptionPane.showMessageDialog(null, "å¯†ç é”™è¯¯ã€‚");
-                    return false; // å¯†ç é”™è¯¯è¿”å›false
+                    JOptionPane.showMessageDialog(null, "ÃÜÂë´íÎó¡£");
+                    return false; // ÃÜÂë´íÎó·µ»Øfalse
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "ç”¨æˆ·ä¸å­˜åœ¨ã€‚");
-                return false; // ç”¨æˆ·ä¸å­˜åœ¨è¿”å›false
+                JOptionPane.showMessageDialog(null, "ÓÃ»§²»´æÔÚ¡£");
+                return false; // ÓÃ»§²»´æÔÚ·µ»Øfalse
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "æ•°æ®åº“å¼‚å¸¸ï¼\n" + ex.getMessage());
-            return false; // æ•°æ®åº“å¼‚å¸¸è¿”å›false
+            JOptionPane.showMessageDialog(null, "Êı¾İ¿âÒì³££¡\n" + ex.getMessage());
+            return false; // Êı¾İ¿âÒì³£·µ»Øfalse
         } finally {
             if (conn != null) {
                 try {
@@ -70,39 +70,39 @@ public class UserDao {
             String pwd = user.getPwd();
             String okPwd = user.getOkpwd();
             String allergy = user.getAllergy();
-            System.out.println(username + "" +  pwd+ "" +okPwd);
+            System.out.println(username + "" + pwd + "" + okPwd);
             if (username.isEmpty() || pwd.isEmpty() || okPwd.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "ç”¨æˆ·åæˆ–å¯†ç ä¸èƒ½ä¸ºç©ºã€‚");
+                JOptionPane.showMessageDialog(null, "ÓÃ»§Ãû»òÃÜÂë²»ÄÜÎª¿Õ¡£");
                 return false;
             }
             if (!pwd.trim().equals(okPwd.trim())) {
-                JOptionPane.showMessageDialog(null, "ä¸¤æ¬¡è¾“å…¥çš„å¯†ç ä¸ä¸€è‡´ã€‚");
+                JOptionPane.showMessageDialog(null, "Á½´ÎÊäÈëµÄÃÜÂë²»Ò»ÖÂ¡£");
                 return false;
             }
             System.out.println(UserStateTool.getvcode());
-            if(!UserStateTool.getvcode().equals(vcode)){
-                JOptionPane.showMessageDialog(null, "éªŒè¯ç é”™è¯¯");
+            if (!UserStateTool.getvcode().equals(vcode)) {
+                JOptionPane.showMessageDialog(null, "ÑéÖ¤Âë´íÎó");
                 return false;
             }
 
-            conn = Dao.getConn(); // è·å¾—æ•°æ®åº“è¿æ¥
-            // åˆ›å»ºPreparedStatementå¯¹è±¡ï¼Œå¹¶ä¼ é€’SQLè¯­å¥
+            conn = Dao.getConn(); // »ñµÃÊı¾İ¿âÁ¬½Ó
+            // ´´½¨PreparedStatement¶ÔÏó£¬²¢´«µİSQLÓï¾ä
             PreparedStatement ps = conn
-                    .prepareStatement("insert into ad_user (username,password, allergy, role)  values(?,?,?, 1)");
-            ps.setString(1, username.trim()); // ä¸ºå‚æ•°èµ‹å€¼
+                    .prepareStatement("insert into ad_user (username,password, allergy, role)  values(?,?,?,?)");
+            ps.setString(1, username.trim()); // Îª²ÎÊı¸³Öµ
             ps.setString(2, pwd.trim());
             ps.setString(3, allergy.trim());
-            int flag = ps.executeUpdate();// æ‰§è¡Œsql
-            if (flag > 0) {// å¦‚æœè¢«å½±å“è¡Œæ•°å¤§äº0
+            int flag = ps.executeUpdate();// Ö´ĞĞsql
+            if (flag > 0) {// Èç¹û±»Ó°ÏìĞĞÊı´óÓÚ0
                 UserStateTool.setRight(1);
-                JOptionPane.showMessageDialog(null, "æ·»åŠ æˆåŠŸã€‚");
+                JOptionPane.showMessageDialog(null, "Ìí¼Ó³É¹¦¡£");
                 return true;
             } else {
-                JOptionPane.showMessageDialog(null, "æ·»åŠ å¤±è´¥ã€‚");
+                JOptionPane.showMessageDialog(null, "Ìí¼ÓÊ§°Ü¡£");
                 return false;
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "ç”¨æˆ·åé‡å¤ï¼Œè¯·æ¢ä¸ªåç§°ï¼");
+            JOptionPane.showMessageDialog(null, "ÓÃ»§ÃûÖØ¸´£¬Çë»»¸öÃû³Æ£¡");
             return false;
         } finally {
             try {
@@ -119,7 +119,7 @@ public class UserDao {
     public static void updateUser(String oldPwd, String newPwd, String okPwd) {
         try {
             if (!newPwd.trim().equals(okPwd.trim())) {
-                JOptionPane.showMessageDialog(null, "ä¸¤æ¬¡è¾“å…¥çš„å¯†ç ä¸ä¸€è‡´ã€‚");
+                JOptionPane.showMessageDialog(null, "Á½´ÎÊäÈëµÄÃÜÂë²»Ò»ÖÂ¡£");
                 return;
             }
             Connection conn = Dao.getConn();
@@ -127,7 +127,7 @@ public class UserDao {
                     .prepareStatement("select password from ad_user where username = ?");
             ps.setString(1, UserStateTool.getUsername());
             ResultSet rs = ps.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 String password = rs.getString(1);
                 if (password.equals(oldPwd)) {
                     PreparedStatement ps1 = conn.prepareStatement("update ad_user set password = ? where username = ?");
@@ -135,82 +135,85 @@ public class UserDao {
                     ps1.setString(2, UserStateTool.getUsername());
                     int flag1 = ps1.executeUpdate();
                     if (flag1 > 0) {
-                        JOptionPane.showMessageDialog(null, "ä¿®æ”¹æˆåŠŸã€‚");
+                        JOptionPane.showMessageDialog(null, "ĞŞ¸Ä³É¹¦¡£");
                     } else {
-                        JOptionPane.showMessageDialog(null, "ä¿®æ”¹å¤±è´¥ã€‚");
+                        JOptionPane.showMessageDialog(null, "ĞŞ¸ÄÊ§°Ü¡£");
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "åŸå¯†ç ä¸æ­£ç¡®ã€‚");
+                    JOptionPane.showMessageDialog(null, "Ô­ÃÜÂë²»ÕıÈ·¡£");
                     return;
                 }
             }
             ps.close();
             conn.close();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "æ•°æ®åº“å¼‚å¸¸ï¼" + ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Êı¾İ¿âÒì³££¡" + ex.getMessage());
             return;
         }
     }
 
-    public static List<User> getPuser(){
+    public static List<User> getPuser() {
         Connection conn = null;
         List<User> users = new ArrayList<>();
         try {
-            conn = Dao.getConn(); // è·å¾—æ•°æ®åº“è¿æ¥
-            // åˆ›å»ºPreparedStatementå¯¹è±¡ï¼Œå¹¶ä¼ é€’SQLè¯­å¥
+            conn = Dao.getConn(); // »ñµÃÊı¾İ¿âÁ¬½Ó
+            // ´´½¨PreparedStatement¶ÔÏó£¬²¢´«µİSQLÓï¾ä
             PreparedStatement ps = conn.prepareStatement("select username, password, status from ad_user where role = 1");
-            ResultSet rs = ps.executeQuery(); // æ‰§è¡ŒSQLè¯­å¥ï¼Œè·å¾—æŸ¥è¯¢ç»“æœé›†
-            while (rs.next()) { // æŸ¥è¯¢åˆ°ç”¨æˆ·ä¿¡æ¯
-                users.add(new User(rs.getString("username"),
+            ResultSet rs = ps.executeQuery(); // Ö´ĞĞSQLÓï¾ä£¬»ñµÃ²éÑ¯½á¹û¼¯
+            while (rs.next()) { // ²éÑ¯µ½ÓÃ»§ĞÅÏ¢
+                User u = new User(rs.getString("username"),
                         rs.getString("password"),
-                        rs.getString("status")));
+                        rs.getString("status"));
+                u.setRole("1");
+                users.add(u);
             }
             return users;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("");
             return null;
         }
     }
 
-    public static List<User> getDuser(){
+    public static List<User> getDuser() {
         Connection conn = null;
         List<User> users = new ArrayList<>();
         try {
-            conn = Dao.getConn(); // è·å¾—æ•°æ®åº“è¿æ¥
-            // åˆ›å»ºPreparedStatementå¯¹è±¡ï¼Œå¹¶ä¼ é€’SQLè¯­å¥
+            conn = Dao.getConn(); // »ñµÃÊı¾İ¿âÁ¬½Ó
+            // ´´½¨PreparedStatement¶ÔÏó£¬²¢´«µİSQLÓï¾ä
             PreparedStatement ps = conn.prepareStatement("select username, password, status from ad_user where role = 2");
-            ResultSet rs = ps.executeQuery(); // æ‰§è¡ŒSQLè¯­å¥ï¼Œè·å¾—æŸ¥è¯¢ç»“æœé›†
-            while (rs.next()) { // æŸ¥è¯¢åˆ°ç”¨æˆ·ä¿¡æ¯
-                users.add(new User(rs.getString(1),
+            ResultSet rs = ps.executeQuery(); // Ö´ĞĞSQLÓï¾ä£¬»ñµÃ²éÑ¯½á¹û¼¯
+            while (rs.next()) { // ²éÑ¯µ½ÓÃ»§ĞÅÏ¢
+                User u = new User(rs.getString(1),
                         rs.getString(2),
-                        rs.getString(3)));
+                        rs.getString(3));
+                u.setRole("2");
+                users.add(u);
             }
             return users;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("test");
             return users;
         }
     }
 
-    public static List<User> getAuser(){
+    public static List<User> getAuser() {
         Connection conn = null;
         List<User> users = new ArrayList<>();
         try {
-            conn = Dao.getConn(); // è·å¾—æ•°æ®åº“è¿æ¥
-            // åˆ›å»ºPreparedStatementå¯¹è±¡ï¼Œå¹¶ä¼ é€’SQLè¯­å¥
+            conn = Dao.getConn(); // »ñµÃÊı¾İ¿âÁ¬½Ó
+            // ´´½¨PreparedStatement¶ÔÏó£¬²¢´«µİSQLÓï¾ä
             PreparedStatement ps = conn.prepareStatement("select username, password, status from ad_user where role = 3 or role = 4");
-            ResultSet rs = ps.executeQuery(); // æ‰§è¡ŒSQLè¯­å¥ï¼Œè·å¾—æŸ¥è¯¢ç»“æœé›†
-            while (rs.next()) { // æŸ¥è¯¢åˆ°ç”¨æˆ·ä¿¡æ¯
-                users.add(new User(rs.getString(1),
+            ResultSet rs = ps.executeQuery(); // Ö´ĞĞSQLÓï¾ä£¬»ñµÃ²éÑ¯½á¹û¼¯
+            while (rs.next()) { // ²éÑ¯µ½ÓÃ»§ĞÅÏ¢
+                User u = new User(rs.getString(1),
                         rs.getString(2),
-                        rs.getString(3)));
+                        rs.getString(3));
+                u.setRole(rs.getString(4));
+                users.add(u);
             }
             return users;
-        }
-        catch (Exception e){
-            System.out.println("æŠ¥é”™å•¦");
+        } catch (Exception e) {
+            System.out.println("±¨´íÀ²");
             return users;
         }
     }
@@ -219,19 +222,20 @@ public class UserDao {
         Connection conn = null;
         List<User> users = new ArrayList<>();
         try {
-            conn = Dao.getConn(); // è·å¾—æ•°æ®åº“è¿æ¥
-            // åˆ›å»ºPreparedStatementå¯¹è±¡ï¼Œå¹¶ä¼ é€’SQLè¯­å¥
+            conn = Dao.getConn(); // »ñµÃÊı¾İ¿âÁ¬½Ó
+            // ´´½¨PreparedStatement¶ÔÏó£¬²¢´«µİSQLÓï¾ä
             PreparedStatement ps = conn.prepareStatement("select username, password, status from ad_user");
-            ResultSet rs = ps.executeQuery(); // æ‰§è¡ŒSQLè¯­å¥ï¼Œè·å¾—æŸ¥è¯¢ç»“æœé›†
-            while (rs.next()) { // æŸ¥è¯¢åˆ°ç”¨æˆ·ä¿¡æ¯
-                users.add(new User(rs.getString(1),
+            ResultSet rs = ps.executeQuery(); // Ö´ĞĞSQLÓï¾ä£¬»ñµÃ²éÑ¯½á¹û¼¯
+            while (rs.next()) { // ²éÑ¯µ½ÓÃ»§ĞÅÏ¢
+                User u = new User(rs.getString(1),
                         rs.getString(2),
-                        rs.getString(3)));
+                        rs.getString(3));
+                u.setRole(rs.getString(4));
+                users.add(u);
             }
             return users;
-        }
-        catch (Exception e){
-            System.out.println("æŠ¥é”™å•¦");
+        } catch (Exception e) {
+            System.out.println("±¨´íÀ²");
             return users;
         }
     }
@@ -239,12 +243,13 @@ public class UserDao {
     public static void setRole(User user) {
         try {
             Connection conn = Dao.getConn();
-                    PreparedStatement ps1 = conn.prepareStatement("update ad_user set status = ? where username = ?");
-                    ps1.setString(1, user.getStatus());
-                    ps1.setString(2, user.getName());
-                    ps1.executeUpdate();
+            PreparedStatement ps1 = conn.prepareStatement("update ad_user set status = ? where username = ? and role = ?");
+            ps1.setString(1, user.getStatus());
+            ps1.setString(2, user.getName());
+            ps1.setString(3, user.getRole());
+            ps1.executeUpdate();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "æ•°æ®åº“å¼‚å¸¸ï¼" + ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Êı¾İ¿âÒì³££¡" + ex.getMessage());
             return;
         }
     }
@@ -258,7 +263,7 @@ public class UserDao {
             model.fireTableDataChanged();
             ps1.executeUpdate();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "æ•°æ®åº“å¼‚å¸¸ï¼" + ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Êı¾İ¿âÒì³££¡" + ex.getMessage());
             return;
         }
     }
@@ -272,23 +277,23 @@ public class UserDao {
             ps1.setString(2, user.getName());
             ps1.executeUpdate();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "æ•°æ®åº“å¼‚å¸¸ï¼" + ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Êı¾İ¿âÒì³££¡" + ex.getMessage());
             return;
         }
     }
 
-
     public static void deleteUser(User user) {
         Connection conn = null;
         try {
-            conn = Dao.getConn(); // è·å¾—æ•°æ®åº“è¿æ¥
-            // åˆ›å»ºPreparedStatementå¯¹è±¡ï¼Œå¹¶ä¼ é€’SQLè¯­å¥
+            conn = Dao.getConn(); // »ñµÃÊı¾İ¿âÁ¬½Ó
+            // ´´½¨PreparedStatement¶ÔÏó£¬²¢´«µİSQLÓï¾ä
             PreparedStatement ps = conn
-                    .prepareStatement("delete from ad_user where username = ?");
-            ps.setString(1, user.getName()); // ä¸ºå‚æ•°èµ‹å€¼
-            ps.executeUpdate();// æ‰§è¡Œsql
+                    .prepareStatement("delete from ad_user where username = ? and role = ?");
+            ps.setString(1, user.getName()); // Îª²ÎÊı¸³Öµ
+            ps.setString(2, user.getRole());
+            ps.executeUpdate();// Ö´ĞĞsql
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "ç”¨æˆ·åé‡å¤ï¼Œè¯·æ¢ä¸ªåç§°ï¼");
+            System.out.println(new RuntimeException().getMessage());
         } finally {
             try {
                 if (conn != null) {
@@ -298,8 +303,38 @@ public class UserDao {
 
             }
         }
+
+
     }
 
+    public static boolean isUsernameExists(String username,int role) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = Dao.getConn();
+            ps = conn.prepareStatement("SELECT COUNT(*) FROM ad_user WHERE username = ? AND role = ?");
+            ps.setString(1, username);
+            ps.setInt(2, role);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+
+            }
+        }
+        return false;
+    }
 }
 

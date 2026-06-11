@@ -77,9 +77,31 @@ public class DisplayFrame_Doctor extends JFrame {
         header.add(btn_panel, BorderLayout.EAST);
         header.add(title, BorderLayout.WEST);
 
+        initmenu();
+
         initsearch();
         add(initlrpanel());
         add(header, BorderLayout.NORTH);
+    }
+
+    private void initmenu() {
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu sysMenu = new JMenu("账户");
+        JMenuItem logoutItem = new JMenuItem("退出登录");
+        logoutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(null, "确认退出登录？", "退出", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    new LoginFrame_Fir();
+                    dispose();
+                }
+            }
+        });
+        sysMenu.add(logoutItem);
+        menuBar.add(sysMenu);
+        setJMenuBar(menuBar);
     }
 
     //依旧左右布局

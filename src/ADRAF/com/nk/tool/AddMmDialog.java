@@ -8,9 +8,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AddMmDialog extends JFrame {
+public class AddMmDialog extends Dialog {
 
-    public AddMmDialog() throws HeadlessException {
+    public AddMmDialog(Frame f){
+        super(f);
+        setModal(true);
         setTitle("¼ÇÂ¼ÏêÇé");
         setSize(450, 380);
         setLocationRelativeTo(null);
@@ -71,16 +73,15 @@ public class AddMmDialog extends JFrame {
         yesBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Medicine m = new Medicine(jtf1.getText().trim(),
-                        jtf2.getText().trim(),
+                Medicine m = new Medicine(jtf2.getText().trim(),
+                        jtf1.getText().trim(),
                         jta1.getText().trim(),
                         jta2.getText().trim());
-                MedicineDao.insertMedicine(m);
+                if (MedicineDao.insertMedicine(m)) {
+                    dispose();
+                }
             }
         });
-
-
-
 
 
         setAlwaysOnTop(true);
@@ -90,10 +91,6 @@ public class AddMmDialog extends JFrame {
         setVisible(true);
     }
 
-
-    public static void main(String[] args) {
-        new AddMmDialog();
-    }
 
 
 

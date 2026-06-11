@@ -79,7 +79,6 @@ public class RecordDao {
         return list;
     }
 
-
     public static List<Records> getyesPatientRecords() {
         List<Records> list = new ArrayList<>();
         Connection conn = null;
@@ -141,10 +140,6 @@ public class RecordDao {
         return list;
     }
 
-
-
-
-
     public static List<Records> getMyRecords() {
         List<Records> list = new ArrayList<>();
         Connection conn = null;
@@ -176,9 +171,28 @@ public class RecordDao {
         return list;
     }
 
+    public static void deleteRecord(Records r) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = Dao.getConn();
+            ps = conn.prepareStatement("delete from ad_record where id = ?");
+            ps.setInt(1, r.getId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+            }
+        }
+    }
 
 
-    public static void updateDoctorrecord(Records record, String status,String docname , Component PrecDialog) {
+
+        public static void updateDoctorrecord(Records record, String status,String docname , Component PrecDialog) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -203,10 +217,6 @@ public class RecordDao {
             } catch (Exception e) {}
         }
     }
-
-
-
-
 
 
     public static void insertMyrecord(Records r) {

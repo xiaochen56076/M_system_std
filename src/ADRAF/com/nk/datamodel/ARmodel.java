@@ -41,7 +41,7 @@ public class ARmodel extends AbstractTableModel {
             case 4: return m.getUsername();
             case 5: return m.getStatus();
             case 6: return m.getDocname();
-            case 7: return "操作";
+            case 7: return "查看详情";
             default: return null;
         }
     }

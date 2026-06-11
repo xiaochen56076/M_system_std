@@ -5,11 +5,11 @@ import ADRAF.com.nk.bean.User;
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
-public class Amodel extends AbstractTableModel {
+public class AUmodel extends AbstractTableModel {
     private String[] header = {"用户名", "密码", "状态", "", ""};
     private List<User> data;
 
-    public Amodel(List<User> data) {
+    public AUmodel(List<User> data) {
         this.data = data;
     }
 
@@ -35,7 +35,7 @@ public class Amodel extends AbstractTableModel {
             case 0: return u.getName();
             case 1: return u.getPwd();
             case 2: return u.getStatus();
-            case 3: return "禁用";
+            case 3: return u.getStatus().equals("启用") ? "禁用" :"启用";
             case 4: return "删除";
             default: return null;
         }

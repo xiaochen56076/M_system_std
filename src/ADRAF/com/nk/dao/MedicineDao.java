@@ -5,6 +5,7 @@ import ADRAF.com.nk.bean.Medicine;
 import ADRAF.com.nk.tool.UserStateTool;
 
 import javax.swing.*;
+import java.awt.*;
 import java.sql.*;
 import java.util.List;
 import java.util.Vector;
@@ -12,7 +13,6 @@ import java.util.Vector;
 
 public class MedicineDao {
 
-//    获取所有的数据
     public static List<Medicine> getAllmedicine() {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -60,22 +60,28 @@ public class MedicineDao {
             ps.setString(3, m.getAdverseReaction());
             ps.setString(4, m.getContraindication());
             int flag = ps.executeUpdate();
-            if (flag > 0) {// 如果被影响行数大于0
-                UserStateTool.setRight(1);
-                JOptionPane.showMessageDialog(null, "添加成功。");
+            if (flag > 0) {
+//                UserStateTool.setRight(1);
+                JOptionPane.showMessageDialog(null, "添加成功");
                 return true;
             } else {
-                JOptionPane.showMessageDialog(null, "添加失败。");
+                JOptionPane.showMessageDialog(null, "添加成功");
                 return false;
             }
         }catch (Exception e){
-            JOptionPane.showMessageDialog(null, "测试");
+            JOptionPane.showMessageDialog(null, "错误");
             return false;
+        } finally {
+            try {
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
 
-//    搜索药物
     public static List<Medicine> seacrchMedicine(String keyword){
         Connection conn = null;
         PreparedStatement ps = null;
@@ -138,6 +144,27 @@ public class MedicineDao {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+
+    public static void updateMedicine(Medicine m) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = Dao.getConn();
+            ps = conn.prepareStatement(
+                    "update ad_medicine set name=?, adverseReaction=?, contraindication=? WHERE encoding=?"
+            );
+            ps.setString(1, m.getName());
+            ps.setString(2, m.getAdverseReaction());
+            ps.setString(3, m.getContraindication());
+            ps.setString(4, m.getEncoding());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (ps != null) ps.close(); if (conn != null) conn.close(); } catch (Exception e) {}
         }
     }
 

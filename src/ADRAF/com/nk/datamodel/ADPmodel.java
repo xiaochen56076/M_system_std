@@ -4,18 +4,17 @@ package ADRAF.com.nk.datamodel;
 // @Time：2026-06-10-18-53
 // @Project：ADARF_P
 
-import ADRAF.com.nk.bean.Records;
 import ADRAF.com.nk.bean.User;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
-public class Dmodel extends AbstractTableModel {
+public class ADPmodel extends AbstractTableModel {
     private String[] header = {"用户名", "密码", "状态", "", "", ""};
     private List<User> data;
 
 
-    public Dmodel(List<User> data) {
+    public ADPmodel(List<User> data) {
         this.data = data;
     }
 
@@ -45,7 +44,7 @@ public class Dmodel extends AbstractTableModel {
             case 2: return u.getStatus();
             case 3: return "编辑资料";
             case 4: return "重置密码";
-            case 5: return u.getStatus().equals("禁用") ? "启用" :"禁用";
+            case 5: return u.getStatus().equals("启用") ? "禁用" :"启用";
             default: return null;
         }
     }
