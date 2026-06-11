@@ -10,11 +10,11 @@ import ADRAF.com.nk.bean.Medicine;
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
-public class DMmodel extends AbstractTableModel {
+public class AMmodel extends AbstractTableModel {
     private final String[] header = {"国字号", "药品名称", "不良反应", "禁忌", "", ""};
     private final List<Medicine> data;
 
-    public DMmodel(List<Medicine> list) {
+    public AMmodel(List<Medicine> list) {
 
         this.data = list;
     }
@@ -48,7 +48,7 @@ public class DMmodel extends AbstractTableModel {
         }
     }
 
-    public Medicine getDRecordrow(int row) {
+    public Medicine getAMecordrow(int row) {
         return data.get(row);
     }
 }

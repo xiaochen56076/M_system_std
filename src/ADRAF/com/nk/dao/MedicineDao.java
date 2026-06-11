@@ -12,7 +12,7 @@ import java.util.Vector;
 
 public class MedicineDao {
 
-//    è·å–æ‰€æœ‰çš„æ•°æ®
+//    »ñÈ¡ËùÓĞµÄÊı¾İ
     public static List<Medicine> getAllmedicine() {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -49,8 +49,6 @@ public class MedicineDao {
     }
 
 
-
-
     public static boolean insertMedicine(Medicine m){
         Connection conn = null;
         PreparedStatement ps = null;
@@ -62,24 +60,22 @@ public class MedicineDao {
             ps.setString(3, m.getAdverseReaction());
             ps.setString(4, m.getContraindication());
             int flag = ps.executeUpdate();
-            if (flag > 0) {// å¦‚æœè¢«å½±å“è¡Œæ•°å¤§äº0
+            if (flag > 0) {// Èç¹û±»Ó°ÏìĞĞÊı´óÓÚ0
                 UserStateTool.setRight(1);
-                JOptionPane.showMessageDialog(null, "æ·»åŠ æˆåŠŸã€‚");
+                JOptionPane.showMessageDialog(null, "Ìí¼Ó³É¹¦¡£");
                 return true;
             } else {
-                JOptionPane.showMessageDialog(null, "æ·»åŠ å¤±è´¥ã€‚");
+                JOptionPane.showMessageDialog(null, "Ìí¼ÓÊ§°Ü¡£");
                 return false;
             }
         }catch (Exception e){
-            JOptionPane.showMessageDialog(null, "æµ‹è¯•");
+            JOptionPane.showMessageDialog(null, "²âÊÔ");
             return false;
         }
     }
 
 
-
-
-//    æœç´¢è¯ç‰©
+//    ËÑË÷Ò©Îï
     public static List<Medicine> seacrchMedicine(String keyword){
         Connection conn = null;
         PreparedStatement ps = null;
@@ -113,4 +109,36 @@ public class MedicineDao {
             }
         }
     }
+
+
+    public static void deleteMedicine(Medicine m){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        conn = Dao.getConn();
+        try {
+            ps = conn.prepareStatement("delete from ad_medicine where name = ?");
+            ps.setString(1, m.getName());
+            int flag = ps.executeUpdate();
+            if(flag > 0){
+                JOptionPane.showMessageDialog(null, "É¾³ı³É¹¦");
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "É¾³ıÊ§°Ü");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

@@ -81,7 +81,7 @@ public class PrecDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 record.setDoctorOpinion(Opinion.getText().trim());
-                RecordDao.updateDoctorrecord(record, status, PrecDialog.this);
+                RecordDao.updateDoctorrecord(record, status,UserStateTool.getUsername() , PrecDialog.this);
                 updated = true;
                 dispose();
             }

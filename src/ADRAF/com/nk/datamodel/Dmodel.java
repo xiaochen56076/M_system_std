@@ -45,7 +45,7 @@ public class Dmodel extends AbstractTableModel {
             case 2: return u.getStatus();
             case 3: return "编辑资料";
             case 4: return "重置密码";
-            case 5: return "禁用";
+            case 5: return u.getStatus().equals("禁用") ? "启用" :"禁用";
             default: return null;
         }
     }

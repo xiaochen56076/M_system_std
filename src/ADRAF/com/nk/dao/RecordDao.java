@@ -110,6 +110,38 @@ public class RecordDao {
         return list;
     }
 
+    public static List<Records> getAllRecords() {
+        List<Records> list = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = Dao.getConn();
+            ps = conn.prepareStatement(
+                    "SELECT id,username ,drug_name, symptom, days, report_time, status, doctor_opinion, doctorname FROM ad_record ORDER BY report_time DESC");
+            ResultSet rs = ps.executeQuery();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            while (rs.next()) {
+                list.add(new Records(
+                        rs.getString("doctorname"),
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("drug_name"),
+                        rs.getString("symptom"),
+                        rs.getString("days"),
+                        sdf.format(rs.getTimestamp("report_time")),
+                        rs.getString("status"),
+                        rs.getString("doctor_opinion")
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (ps != null) ps.close(); if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+        return list;
+    }
+
+
 
 
 
@@ -146,16 +178,17 @@ public class RecordDao {
 
 
 
-    public static void updateDoctorrecord(Records record, String status, Component PrecDialog) {
+    public static void updateDoctorrecord(Records record, String status,String docname , Component PrecDialog) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = Dao.getConn();
-            ps = conn.prepareStatement("update ad_record set doctor_opinion=?,status =? where username = ? and id = ?");
+            ps = conn.prepareStatement("update ad_record set doctor_opinion=?,status =? ,doctorname = ? where username = ? and id = ?");
             ps.setString(1,record.getDoctorOpinion());
             ps.setString(2, status);
-            ps.setString(3, record.getUsername());
-            ps.setInt(4, record.getId());
+            ps.setString(3, docname);
+            ps.setString(4, record.getUsername());
+            ps.setInt(5, record.getId());
             int flag1 = ps.executeUpdate();
             if (flag1 > 0) {
                 JOptionPane.showMessageDialog(PrecDialog, "ÐÞ¸Ä³É¹¦¡£");

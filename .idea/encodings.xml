@@ -2,8 +2,10 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/aimodel/AiChat.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/dao/MedicineDao.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/dao/UserDao.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/datamodel/Amodel.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/datamodel/Umodel.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/datamodel/Pmodel.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/demo/DisplayFrame_Administrator.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/demo/DisplayFrame_Patient1.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/ADRAF/com/nk/frame/DisplayFrame_Visitor.java" charset="GBK" />

@@ -66,7 +66,7 @@ public class DisplayFrame_Patient extends JFrame {
 
     private void init() {
         setSize(1400, 800);
-        setTitle("药物不良反应查询分析平台(患者模式)");
+        setTitle("药物不良反应查询反馈平台(患者模式)");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());

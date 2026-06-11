@@ -3,14 +3,15 @@ package ADRAF.com.nk.datamodel;
 import ADRAF.com.nk.bean.User;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Umodel extends AbstractTableModel {
-    private String[] header = {"姓名", "密码", "状态", "过敏史", "", "", ""};
+public class Pmodel extends AbstractTableModel {
+    private String[] header = {"用户名", "密码", "状态", "过敏史", "", "", ""};
     private List<User> data;
 
-    public Umodel(List<User> data) {
-        this.data = data;
+    public Pmodel(List<User> data) {
+        this.data = (data != null) ? data : new ArrayList<>();
     }
 
     @Override
@@ -38,8 +39,8 @@ public class Umodel extends AbstractTableModel {
             case 3:
                 String allergy = u.getAllergy();
                 return (allergy == null || allergy.isEmpty()) ? "无" : allergy;
-            case 4: return "查看详情";
-            case 5: return "禁用";
+            case 4: return "编辑资料";
+            case 5: return u.getStatus().equals("禁用") ? "启动":"禁用";
             case 6: return "删除";
             default: return null;
         }

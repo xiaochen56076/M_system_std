@@ -136,8 +136,9 @@ public class LoginFrame_Fir extends JFrame {
             new DisplayFrame_Doctor();
             dispose();
         }
-        else if(bool && UserStateTool.getRight() == 3){
-
+        else if(bool && (UserStateTool.getRight() == 3 || UserStateTool.getRight() == 4)){
+            new DisplayFrame_Administrator();
+            dispose();
         }
 
 
