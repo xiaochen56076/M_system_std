@@ -314,9 +314,9 @@ public class DisplayFrame_Administrator extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.add("患者管理", initPatientTable(UserDao.));
-        tabbedPane.add("医生管理", initDoctorTable(UserDao.));
-        tabbedPane.add("管理员管理", initAdminTable(UserDao.));
+        tabbedPane.add("患者管理", initPatientTable(UserDao.getAllUser()));
+        tabbedPane.add("医生管理", initDoctorTable(UserDao.getAllUser()));
+        tabbedPane.add("管理员管理", initAdminTable(UserDao.getAllUser()));
         panel.add(tabbedPane);
 
         return panel;
