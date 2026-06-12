@@ -119,8 +119,8 @@ public class DisplayFrame_Visitor extends JFrame {
         leftpanel.setBackground(Color.WHITE);
         JButton btn1 = new JButton("药物查询");
         JButton btn2 = new JButton("症状自查");
-        btn1.setPreferredSize(new Dimension(180,  60));
-        btn2.setPreferredSize(new Dimension(180,  60));
+        btn1.setPreferredSize(new Dimension(180, 60));
+        btn2.setPreferredSize(new Dimension(180, 60));
         leftpanel.add(btn1);
         leftpanel.add(btn2);
 
@@ -165,9 +165,6 @@ public class DisplayFrame_Visitor extends JFrame {
     }
 
 
-
-
-
     //搜索框部分
     private void initsearch() {
         search_area = new JPanel();
@@ -179,10 +176,10 @@ public class DisplayFrame_Visitor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String word = jTextField.getText().trim();
-                refreshTable(MedicineDao.seacrchMedicine(word));
-
                 if (word.isEmpty()) {
                     refreshTable(MedicineDao.getAllmedicine());
+                } else {
+                    refreshTable(MedicineDao.seacrchMedicine(word));
                 }
             }
         });
@@ -210,7 +207,7 @@ public class DisplayFrame_Visitor extends JFrame {
                 int row = resultTable.rowAtPoint(e.getPoint());
                 System.out.println(row);
                 if (col == 4) {
-                    Medicine m = ((Mmodel)resultTable.getModel()).getMedicinerow(row);
+                    Medicine m = ((Mmodel) resultTable.getModel()).getMedicinerow(row);
                     new MmDialog(m);
                 }
             }
@@ -238,7 +235,6 @@ public class DisplayFrame_Visitor extends JFrame {
         resultTable.getColumnModel().getColumn(3).setPreferredWidth(200);
         resultTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
     }
-
 
 
     //自查部分(AI)
@@ -293,7 +289,6 @@ public class DisplayFrame_Visitor extends JFrame {
         });
 
 
-
         btn_ok.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -345,9 +340,10 @@ public class DisplayFrame_Visitor extends JFrame {
         public BtnRenderer() {
             setOpaque(true);
         }
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-                setText("查看详情");
+            setText("查看详情");
             return this;
         }
     }

@@ -43,10 +43,6 @@ public class RegisterFrame extends JFrame {
     Object[] temp;
 
 
-
-
-
-
     public RegisterFrame() throws HeadlessException {
         init();
         inittext();
@@ -56,7 +52,7 @@ public class RegisterFrame extends JFrame {
         this.setVisible(true);
     }
 
-    private void init(){
+    private void init() {
         this.setSize(550, 350);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
@@ -66,7 +62,7 @@ public class RegisterFrame extends JFrame {
     }
 
 
-    private void inittext(){
+    private void inittext() {
         userLabel = new JLabel("用户名:");
         userLabel.setFont(font.ft);//设置字体
         userLabel.setBounds(30, 20, 80, 30);
@@ -114,7 +110,6 @@ public class RegisterFrame extends JFrame {
         this.add(jsp);
 
 
-
         vcodeLable = new JLabel("验证码:");
         vcodeLable.setFont(font.ft);
         vcodeLable.setBounds(30, 155, 80, 30);
@@ -126,25 +121,23 @@ public class RegisterFrame extends JFrame {
         this.add(vcode);
 
 
-
-        temp =Radom_code_tool.createImage();
-        ImageIcon img = new ImageIcon((BufferedImage)temp[1]);
-        UserStateTool.setvcode((String)temp[0]);
+        temp = Radom_code_tool.createImage();
+        ImageIcon img = new ImageIcon((BufferedImage) temp[1]);
+        UserStateTool.setvcode((String) temp[0]);
         codegraph = new JLabel(img);
         codegraph.setBounds(280, 155, 100, 30);
         codegraph.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount() == 1){
-                    temp =Radom_code_tool.createImage();
-                    ImageIcon img = new ImageIcon((BufferedImage)temp[1]);
+                if (e.getClickCount() == 1) {
+                    temp = Radom_code_tool.createImage();
+                    ImageIcon img = new ImageIcon((BufferedImage) temp[1]);
                     codegraph.setIcon((Icon) img);
-                    UserStateTool.setvcode((String)temp[0]);
+                    UserStateTool.setvcode((String) temp[0]);
                 }
             }
         });
         this.add(codegraph);
-
 
 
         this.add(pwdeye());
@@ -157,7 +150,7 @@ public class RegisterFrame extends JFrame {
     private JCheckBox okpwdeye() {
         okpwdbox = new JCheckBox();
         okpwdbox.setFont(font.ft);
-        okpwdbox.setBounds(275, 105,80, 40);
+        okpwdbox.setBounds(275, 105, 80, 40);
         okpwdbox.setBorderPainted(false);
         okpwdbox.setContentAreaFilled(false);
         okpwdbox.setFocusPainted(false);
@@ -167,10 +160,9 @@ public class RegisterFrame extends JFrame {
         okpwdbox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(okpwdbox.isSelected()){
-                    okpwdtext.setEchoChar((char)0);
-                }
-                else{
+                if (okpwdbox.isSelected()) {
+                    okpwdtext.setEchoChar((char) 0);
+                } else {
                     okpwdtext.setEchoChar('*');
                 }
             }
@@ -181,7 +173,7 @@ public class RegisterFrame extends JFrame {
     private JCheckBox pwdeye() {
         pwdbox = new JCheckBox();
         pwdbox.setFont(font.ft);
-        pwdbox.setBounds(275, 60,80, 40);
+        pwdbox.setBounds(275, 60, 80, 40);
         pwdbox.setBorderPainted(false);
         pwdbox.setContentAreaFilled(false);
         pwdbox.setFocusPainted(false);
@@ -191,11 +183,10 @@ public class RegisterFrame extends JFrame {
         pwdbox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(pwdbox.isSelected()){
-                    pwktext.setEchoChar((char)0);
+                if (pwdbox.isSelected()) {
+                    pwktext.setEchoChar((char) 0);
 
-                }
-                else{
+                } else {
                     pwktext.setEchoChar('*');
 
                 }
@@ -204,7 +195,7 @@ public class RegisterFrame extends JFrame {
         return pwdbox;
     }
 
-    private JButton Btn_s(){
+    private JButton Btn_s() {
         Btn_sign = new JButton("重置");
         Btn_sign.setBounds(220, 220, 85, 35);
 
@@ -221,7 +212,7 @@ public class RegisterFrame extends JFrame {
         return Btn_sign;
     }
 
-    private JButton Btn_t(){
+    private JButton Btn_t() {
         Btn_temp = new JButton("确认注册");
         Btn_temp.setBounds(315, 220, 85, 35);
 
@@ -230,14 +221,13 @@ public class RegisterFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 User user = new User(usertext.getText().trim(), new String(pwktext.getPassword()), new String(okpwdtext.getPassword()), altext.getText().trim());
 
-                if((!UserDao.isUsernameExists(user.getName())) && UserDao.insertUser(user, vcode.getText().trim())){
+                if ((!UserDao.isUsernameExists(user.getName())) && UserDao.insertUser(user, vcode.getText().trim())) {
                     UserStateTool.setRight(1);
                     UserStateTool.setUsername(user.getName());
                     UserStateTool.setPassword(user.getPwd());
                     DisplayFrame_Patient dfv = new DisplayFrame_Patient();
                     dispose();
-                }
-                else {
+                } else {
                     JOptionPane.showMessageDialog(null, "该用户名已存在");
                 }
             }
@@ -245,7 +235,7 @@ public class RegisterFrame extends JFrame {
         return Btn_temp;
     }
 
-    private JButton Btn_e(){
+    private JButton Btn_e() {
         Btn_exit = new JButton("返回");
         Btn_exit.setBounds(125, 220, 85, 35);
 
@@ -253,15 +243,13 @@ public class RegisterFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println(WindowTool.getJF());
-                if(WindowTool.getJF() instanceof LoginFrame_Fir){
+                if (WindowTool.getJF() instanceof LoginFrame_Fir) {
                     new LoginFrame_Fir();
                     dispose();
-                }
-                else if ( WindowTool.getJF() instanceof LoginFrame_Sec){
+                } else if (WindowTool.getJF() instanceof LoginFrame_Sec) {
                     new LoginFrame_Sec();
                     dispose();
-                }
-                else if(WindowTool.getJF() instanceof DisplayFrame_Visitor){
+                } else if (WindowTool.getJF() instanceof DisplayFrame_Visitor) {
                     new DisplayFrame_Visitor();
                     dispose();
                 }
@@ -280,8 +268,6 @@ public class RegisterFrame extends JFrame {
         bg.setBounds(0, 0, 550, 300);
         this.add(bg);
     }
-
-
 
 
     public static void main(String[] args) {

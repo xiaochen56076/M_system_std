@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.net.URL;
 
-public class LoginFrame_Sec extends JFrame{
+public class LoginFrame_Sec extends JFrame {
     private JLabel userLabel;
     private JLabel pwdLabel;
     private JTextField usertext;
@@ -98,39 +98,38 @@ public class LoginFrame_Sec extends JFrame{
         }
     }
 
-    private void userlogin(){
+    private void userlogin() {
         String name = usertext.getText().trim();
         String password = new String(pwktext.getPassword());
         User user = new User();
         user.setName(name);
         user.setPwd(password);
-        if(UserDao.isAccountDisabled(user.getName())){
+        if (UserDao.isAccountDisabled(user.getName())) {
             JOptionPane.showMessageDialog(null, "该账号已禁用，请联系管理员");
             return;
         }
         boolean bool = UserDao.userLogin(user);
-        if(bool && UserStateTool.getRight() == 1){
+        if (bool && UserStateTool.getRight() == 1) {
             JFrame jfs = WindowTool.getJFS();
-            if(jfs != null){
+            if (jfs != null) {
                 jfs.dispose();
             }
             new DisplayFrame_Patient();
             dispose();
-        }
-        else if(bool && UserStateTool.getRight() == 2){
+        } else if (bool && UserStateTool.getRight() == 2) {
             JFrame jfs = WindowTool.getJFS();
-            if(jfs != null){
+            if (jfs != null) {
                 jfs.dispose();
             }
             new DisplayFrame_Doctor();
             dispose();
-        }
-        else if (bool && UserStateTool.getRight() == 3){
+        } else if (bool && (UserStateTool.getRight() == 3 || UserStateTool.getRight() == 4)) {
             JFrame jfs = WindowTool.getJFS();
-            if(jfs != null){
+            if (jfs != null) {
                 jfs.dispose();
             }
-
+            new DisplayFrame_Administrator();
+            dispose();
         }
 
 

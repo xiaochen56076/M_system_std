@@ -36,7 +36,7 @@ public class DisplayFrame_Administrator extends JFrame {
     private JPanel cardpaanel;
 
     private JTable memTable;
-    private JTable  patientTable;
+    private JTable patientTable;
     private JTable doctorTable;
     private JScrollPane memScrollPane;
     private JButton btnAddDrug;
@@ -190,9 +190,10 @@ public class DisplayFrame_Administrator extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String word = jTextField.getText().trim();
-                refreshTable(MedicineDao.seacrchMedicine(word));
                 if (word.isEmpty()) {
                     refreshTable(MedicineDao.getAllmedicine());
+                } else {
+                    refreshTable(MedicineDao.seacrchMedicine(word));
                 }
             }
         });
@@ -247,6 +248,7 @@ public class DisplayFrame_Administrator extends JFrame {
         public BtnRenderer() {
             setOpaque(true);
         }
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int row, int col) {
@@ -290,11 +292,10 @@ public class DisplayFrame_Administrator extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int col = memTable.columnAtPoint(e.getPoint());
                 int row = memTable.rowAtPoint(e.getPoint());
-                Medicine m = ((AMmodel)memTable.getModel()).getAMecordrow(row);
+                Medicine m = ((AMmodel) memTable.getModel()).getAMecordrow(row);
                 if (col == 4) {
                     showEditMedicineDialog(m);
-                }
-                else if(col == 5){
+                } else if (col == 5) {
                     int confirm = JOptionPane.showConfirmDialog(patientTable, "确定要删除药品 " + m.getName() + " 吗？", "确认删除", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         MedicineDao.deleteMedicine(m);
@@ -326,7 +327,7 @@ public class DisplayFrame_Administrator extends JFrame {
         memTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
     }
 
-    private void refreshmemTable(List<Medicine> list){
+    private void refreshmemTable(List<Medicine> list) {
         memTable.setModel(new AMmodel(list));
         memstyle();
     }
@@ -483,11 +484,8 @@ public class DisplayFrame_Administrator extends JFrame {
     }
 
 
-
-
-
     //标签页部分
-    private JPanel initUsermTable(){
+    private JPanel initUsermTable() {
         JPanel panel = new JPanel(new BorderLayout());
 
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -498,7 +496,6 @@ public class DisplayFrame_Administrator extends JFrame {
 
         return panel;
     }
-
 
 
     //医生部分
@@ -543,7 +540,6 @@ public class DisplayFrame_Administrator extends JFrame {
         });
 
 
-
         btnAddDoctor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -571,12 +567,14 @@ public class DisplayFrame_Administrator extends JFrame {
         doctorTable.getColumnModel().getColumn(4).setCellRenderer(new BtnRenderer());
         doctorTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
     }
+
     private void showDoctorEditDialog(User u, AbstractTableModel model) {
         JDialog dialog = new JDialog(this, "编辑资料 - " + u.getName(), true);
         dialog.setSize(350, 200);
         dialog.setLocationRelativeTo(this);
         dialog.setLayout(null);
 
+        String oldname = u.getName();
         JLabel nameLabel = new JLabel("姓名：");
         nameLabel.setBounds(30, 30, 50, 25);
         dialog.add(nameLabel);
@@ -598,12 +596,23 @@ public class DisplayFrame_Administrator extends JFrame {
         saveBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                u.setName(nameField.getText().trim());
-                u.setPwd(pwdField.getText().trim());
-                JOptionPane.showMessageDialog(dialog, "保存成功");
-                UserDao.setPwd(u);
-                dialog.dispose();
-                model.fireTableDataChanged();
+                String newName = nameField.getText().trim();
+                String newPwd = pwdField.getText().trim();
+                if (newName.isEmpty() || newPwd.isEmpty()) {
+                    JOptionPane.showMessageDialog(dialog, "用户名和密码不能为空");
+                    return;
+                }
+                if (!newName.equals(oldname) && UserDao.isUsernameExists(newName)) {
+                    JOptionPane.showMessageDialog(dialog, "该用户名已存在");
+                    return;
+                }
+                u.setName(newName);
+                u.setPwd(newPwd);
+                if (UserDao.updateUser(oldname, u)) {
+                    JOptionPane.showMessageDialog(dialog, "保存成功");
+                    dialog.dispose();
+                    model.fireTableDataChanged();
+                }
             }
         });
         dialog.add(saveBtn);
@@ -671,6 +680,10 @@ public class DisplayFrame_Administrator extends JFrame {
         dialog.setVisible(true);
     }
 
+    private void refreshDoctorTable() {
+        doctorTable.setModel(new ADPmodel(UserDao.getDuser()));
+        doctorstyle();
+    }
 
 
     //患者部分
@@ -688,7 +701,7 @@ public class DisplayFrame_Administrator extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int col = patientTable.columnAtPoint(e.getPoint());
                 int row = patientTable.rowAtPoint(e.getPoint());
-                Pmodel um = (Pmodel)patientTable.getModel();
+                Pmodel um = (Pmodel) patientTable.getModel();
                 User u = um.getUserrow(row);
                 if (col == 4) {
                     showPatientEditDialog(u, um);
@@ -717,7 +730,7 @@ public class DisplayFrame_Administrator extends JFrame {
         return panel;
     }
 
-    private void refreshpatienttable(List<User> list){
+    private void refreshpatienttable(List<User> list) {
         patientTable.setModel(new Pmodel(list));
         patientstyle();
     }
@@ -742,6 +755,8 @@ public class DisplayFrame_Administrator extends JFrame {
         dialog.setLayout(null);
         dialog.setResizable(false);
 
+        String oldname = u.getName();
+
         JLabel nameLabel = new JLabel("姓名：");
         nameLabel.setBounds(30, 30, 50, 25);
         dialog.add(nameLabel);
@@ -763,12 +778,23 @@ public class DisplayFrame_Administrator extends JFrame {
         saveBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                u.setName(nameField.getText().trim());
-                u.setPwd(pwdField.getText().trim());
-                JOptionPane.showMessageDialog(dialog, "修改成功");
-                UserDao.setPwd(u);
-                dialog.dispose();
-                model.fireTableDataChanged();
+                String newName = nameField.getText().trim();
+                String newPwd = pwdField.getText().trim();
+                if (newName.isEmpty() || newPwd.isEmpty()) {
+                    JOptionPane.showMessageDialog(dialog, "用户名和密码不能为空");
+                    return;
+                }
+                if (!newName.equals(oldname) && UserDao.isUsernameExists(newName)) {
+                    JOptionPane.showMessageDialog(dialog, "该用户名已存在");
+                    return;
+                }
+                u.setName(newName);
+                u.setPwd(newPwd);
+                if (UserDao.updateUser(oldname, u)) {
+                    JOptionPane.showMessageDialog(dialog, "修改成功");
+                    dialog.dispose();
+                    model.fireTableDataChanged();
+                }
             }
         });
         dialog.add(saveBtn);
@@ -785,8 +811,6 @@ public class DisplayFrame_Administrator extends JFrame {
 
         dialog.setVisible(true);
     }
-
-
 
 
     //管理员部分
@@ -809,7 +833,7 @@ public class DisplayFrame_Administrator extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int col = adminTable.columnAtPoint(e.getPoint());
                 int row = adminTable.rowAtPoint(e.getPoint());
-                AUmodel am = (AUmodel)adminTable.getModel();
+                AUmodel am = (AUmodel) adminTable.getModel();
                 User u = am.getUserrow(row);
                 if (col == 3) {
                     String newStatus = "禁用".equals(u.getStatus()) ? "启用" : "禁用";
@@ -841,7 +865,6 @@ public class DisplayFrame_Administrator extends JFrame {
         });
 
 
-
         JScrollPane scrollPane = new JScrollPane(adminTable);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -850,7 +873,7 @@ public class DisplayFrame_Administrator extends JFrame {
         return panel;
     }
 
-    private void refreshAdminTable(List<User> list){
+    private void refreshAdminTable(List<User> list) {
         adminTable.setModel(new AUmodel(list));
         adminstyle();
     }
@@ -900,7 +923,7 @@ public class DisplayFrame_Administrator extends JFrame {
                     JOptionPane.showMessageDialog(dialog, "用户名和密码不能为空");
                     return;
                 }
-                if (UserDao.isUsernameExists(name)){
+                if (UserDao.isUsernameExists(name)) {
                     JOptionPane.showMessageDialog(dialog, "该用户名已存在");
                     return;
                 }
@@ -949,8 +972,6 @@ public class DisplayFrame_Administrator extends JFrame {
         feedbackstyle();
 
 
-
-
         feedbackTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -959,8 +980,8 @@ public class DisplayFrame_Administrator extends JFrame {
                 ARmodel rm = (ARmodel) feedbackTable.getModel();
                 Records r = rm.getARecordrow(row);
                 if (col == 7) {
-                        showFeedbackDetailDialog(r);
-                    }
+                    showFeedbackDetailDialog(r);
+                }
             }
         });
 
@@ -985,7 +1006,6 @@ public class DisplayFrame_Administrator extends JFrame {
         feedbackTable.getColumnModel().getColumn(6).setPreferredWidth(80);
         feedbackTable.getColumnModel().getColumn(7).setCellRenderer(new BtnRenderer());
     }
-
 
     private void showFeedbackDetailDialog(Records r) {
         JDialog dialog = new JDialog(this, "反馈详情", true);
@@ -1075,10 +1095,6 @@ public class DisplayFrame_Administrator extends JFrame {
     }
 
 
-    private void refreshDoctorTable() {
-        doctorTable.setModel(new ADPmodel(UserDao.getDuser()));
-        doctorstyle();
-    }
     public static void main(String[] args) {
         new DisplayFrame_Administrator();
     }

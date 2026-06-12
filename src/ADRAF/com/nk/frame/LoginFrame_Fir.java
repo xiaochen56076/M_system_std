@@ -121,26 +121,24 @@ public class LoginFrame_Fir extends JFrame {
         }
     }
 
-    private void userlogin(){
+    private void userlogin() {
         String name = usertext.getText().trim();
         String password = new String(pwktext.getPassword());
         User user = new User();
         user.setName(name);
         user.setPwd(password);
-        boolean bool = UserDao.userLogin(user);
-        if(UserDao.isAccountDisabled(user.getName())){
+        if (UserDao.isAccountDisabled(user.getName())) {
             JOptionPane.showMessageDialog(null, "该账号已禁用，请联系管理员");
             return;
         }
-        if(bool && UserStateTool.getRight() == 1){
+        boolean bool = UserDao.userLogin(user);
+        if (bool && UserStateTool.getRight() == 1) {
             new DisplayFrame_Patient();
             dispose();
-        }
-        else if(bool && UserStateTool.getRight() == 2){
+        } else if (bool && UserStateTool.getRight() == 2) {
             new DisplayFrame_Doctor();
             dispose();
-        }
-        else if(bool && (UserStateTool.getRight() == 3 || UserStateTool.getRight() == 4)){
+        } else if (bool && (UserStateTool.getRight() == 3 || UserStateTool.getRight() == 4)) {
             new DisplayFrame_Administrator();
             dispose();
         }

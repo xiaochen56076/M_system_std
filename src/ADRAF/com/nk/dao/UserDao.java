@@ -261,10 +261,18 @@ public class UserDao {
                 users.add(u);
             }
             return users;
-        } catch (Exception e) {
-            System.out.println("");
-            return null;
+        } catch (Exception ex) {
+            System.out.println(new RuntimeException().getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {
+
+            }
         }
+        return users;
     }
 
     public static List<User> getDuser() {
@@ -283,10 +291,19 @@ public class UserDao {
                 users.add(u);
             }
             return users;
-        } catch (Exception e) {
-            System.out.println("test");
-            return users;
+        } catch (Exception ex) {
+            System.out.println(new RuntimeException().getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {
+
+            }
         }
+
+        return users;
     }
 
     public static List<User> getAuser() {
@@ -305,10 +322,18 @@ public class UserDao {
                 users.add(u);
             }
             return users;
-        } catch (Exception e) {
-            System.out.println("报错啦");
-            return users;
+        } catch (Exception ex) {
+            System.out.println(new RuntimeException().getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {
+
+            }
         }
+        return users;
     }
 
     public static List<User> getAllUser() {
@@ -372,6 +397,36 @@ public class UserDao {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "数据库异常！" + ex.getMessage());
             return;
+        }
+    }
+
+    public static boolean updateUser(String oldName, User user) {
+        Connection conn = null;
+        try {
+            conn = Dao.getConn();
+            PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE ad_user SET username = ?, password = ? WHERE username = ?");
+            ps.setString(1, user.getName());
+            ps.setString(2, user.getPwd());
+            ps.setString(3, oldName);
+            int flag = ps.executeUpdate();
+            if (flag > 0) {
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(null, "修改失败，未找到该用户");
+                return false;
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "数据库异常！" + ex.getMessage());
+            return false;
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

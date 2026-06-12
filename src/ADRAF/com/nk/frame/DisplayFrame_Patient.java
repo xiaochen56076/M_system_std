@@ -107,6 +107,7 @@ public class DisplayFrame_Patient extends JFrame {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu sysMenu = new JMenu("账户");
+        JMenuItem pwdItem = new JMenuItem("修改密码");
         JMenuItem logoutItem = new JMenuItem("退出登录");
         logoutItem.addActionListener(new ActionListener() {
             @Override
@@ -116,6 +117,13 @@ public class DisplayFrame_Patient extends JFrame {
                     new LoginFrame_Fir();
                     dispose();
                 }
+            }
+        });
+
+        pwdItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("test");
             }
         });
         sysMenu.add(logoutItem);
@@ -181,7 +189,8 @@ public class DisplayFrame_Patient extends JFrame {
                 cardLayout.show(cardpaanel, "query");
             }
         });
-        btn2.addActionListener(new ActionListener() {@Override
+        btn2.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardpaanel, "report");
             }
@@ -213,9 +222,10 @@ public class DisplayFrame_Patient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String word = jTextField.getText().trim();
-                refreshTable(MedicineDao.seacrchMedicine(word));
                 if (word.isEmpty()) {
                     refreshTable(MedicineDao.getAllmedicine());
+                } else {
+                    refreshTable(MedicineDao.seacrchMedicine(word));
                 }
             }
         });
@@ -227,6 +237,7 @@ public class DisplayFrame_Patient extends JFrame {
         resultTable.setModel(new Mmodel(list));
         table();
     }
+
     //初始化药物表格
     private JPanel inittable(List<Medicine> word) {
         tableModel = new Mmodel(word);
@@ -254,6 +265,7 @@ public class DisplayFrame_Patient extends JFrame {
         centerPanel.add(scrollPane, BorderLayout.CENTER);
         return centerPanel;
     }
+
     //设置药品表格
     private void table() {
         resultTable.setRowHeight(35);
@@ -271,6 +283,7 @@ public class DisplayFrame_Patient extends JFrame {
         public BtnRenderer() {
             setOpaque(true);
         }
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int row, int col) {
@@ -319,7 +332,6 @@ public class DisplayFrame_Patient extends JFrame {
         aijsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         aijsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         aijsp.setBounds(30, 215, 800, 400);
-
 
 
         btn_reset.addActionListener(new ActionListener() {
@@ -418,19 +430,18 @@ public class DisplayFrame_Patient extends JFrame {
             }
 
 
-            public void  wordList(){
+            public void wordList() {
                 String word = mSearch.getText().trim();
-                if(word.isEmpty()){
+                if (word.isEmpty()) {
                     mJsp.setVisible(false);
                     return;
                 }
                 mModel.clear();
                 List<Medicine> result = MedicineDao.seacrchMedicine(word);
-                if(result.isEmpty()){
+                if (result.isEmpty()) {
                     mModel.addElement("暂无匹配药品");
-                }
-                else{
-                    for(Medicine m : result){
+                } else {
+                    for (Medicine m : result) {
                         mModel.addElement(m.getName());
                     }
                 }
@@ -441,8 +452,8 @@ public class DisplayFrame_Patient extends JFrame {
         mList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                String selected =  mList.getSelectedValue();
-                if(selected != null && !selected.equals("暂无匹配药品")) {
+                String selected = mList.getSelectedValue();
+                if (selected != null && !selected.equals("暂无匹配药品")) {
                     mSearch.setText(selected);
                     mJsp.setVisible(false);
                 }
@@ -517,6 +528,7 @@ public class DisplayFrame_Patient extends JFrame {
         recordTable.setModel(new Rmodel(list));
         recordTable();
     }
+
     //初始化记录
     private JPanel initrecordpanel(List<Records> word) {
 
@@ -534,7 +546,7 @@ public class DisplayFrame_Patient extends JFrame {
                 int col = recordTable.columnAtPoint(e.getPoint());
                 int row = recordTable.rowAtPoint(e.getPoint());
                 if (col == 5) {
-                    Records r = ((Rmodel)recordTable.getModel()).getRecordrow(row);
+                    Records r = ((Rmodel) recordTable.getModel()).getRecordrow(row);
                     new RecDialog(r);
                 }
             }
@@ -550,6 +562,7 @@ public class DisplayFrame_Patient extends JFrame {
         rpanel.add(recordjsp, BorderLayout.CENTER);
         return rpanel;
     }
+
     //设置记录表格
     private void recordTable() {
         recordTable.setRowHeight(35);

@@ -119,8 +119,8 @@ public class MedicineDao {
         PreparedStatement ps = null;
         conn = Dao.getConn();
         try {
-            ps = conn.prepareStatement("delete from ad_medicine where name = ?");
-            ps.setString(1, m.getName());
+            ps = conn.prepareStatement("delete from ad_medicine where encoding = ? ");
+            ps.setString(1, m.getEncoding());
             int flag = ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);

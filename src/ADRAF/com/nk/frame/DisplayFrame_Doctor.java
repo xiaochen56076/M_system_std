@@ -68,7 +68,7 @@ public class DisplayFrame_Doctor extends JFrame {
 
         btn_panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btn_panel.setOpaque(false);
-        JLabel doctorLabel = new JLabel("医生："+ UserStateTool.getUsername());
+        JLabel doctorLabel = new JLabel("医生：" + UserStateTool.getUsername());
         doctorLabel.setFont(font.ft);
         doctorLabel.setForeground(Color.WHITE);
         doctorLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
@@ -173,16 +173,16 @@ public class DisplayFrame_Doctor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String word = jTextField.getText().trim();
-                refreshTable(MedicineDao.seacrchMedicine(word));
                 if (word.isEmpty()) {
                     refreshTable(MedicineDao.getAllmedicine());
+                } else {
+                    refreshTable(MedicineDao.seacrchMedicine(word));
                 }
             }
         });
         search_area.add(jTextField);
         search_area.add(btn_search);
     }
-
 
 
     //药物查询
@@ -231,9 +231,8 @@ public class DisplayFrame_Doctor extends JFrame {
     }
 
 
-
     //审核部分
-    private void refreshReviewTable(List<Records> list){
+    private void refreshReviewTable(List<Records> list) {
         reviewTable.setModel(new DRmodel(list));
         reviewTable();
     }
@@ -263,7 +262,7 @@ public class DisplayFrame_Doctor extends JFrame {
                     Records r = rm.getDRecordrow(row);
                     test(r);
                     PrecDialog pd = new PrecDialog(r, "已驳回");
-                    if(pd.isUpdated()){
+                    if (pd.isUpdated()) {
                         refreshRecordQueryTable(RecordDao.getyesPatientRecords());
                         refreshReviewTable(RecordDao.getnoPatientRecords());
                     }
@@ -277,12 +276,12 @@ public class DisplayFrame_Doctor extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int col = reviewTable.columnAtPoint(e.getPoint());
                 int row = reviewTable.rowAtPoint(e.getPoint());
-                if(col == 6){
+                if (col == 6) {
                     DRmodel rm = (DRmodel) reviewTable.getModel();
                     Records r = rm.getDRecordrow(row);
                     test(r);
-                    PrecDialog pd =  new PrecDialog(r,"已通过");
-                    if(pd.isUpdated()){
+                    PrecDialog pd = new PrecDialog(r, "已通过");
+                    if (pd.isUpdated()) {
                         refreshRecordQueryTable(RecordDao.getyesPatientRecords());
                         refreshReviewTable(RecordDao.getnoPatientRecords());
                     }
@@ -312,14 +311,13 @@ public class DisplayFrame_Doctor extends JFrame {
     }
 
     //这个是用来测试的，看看数据获取有没有问题
-    public void test(Records r){
+    public void test(Records r) {
         System.out.println(r.getId());
         System.out.println(r.getUsername());
         System.out.println(r.getSymptom());
         System.out.println(r.getMeName());
         System.out.println(r.getDoctorOpinion());
     }
-
 
 
     //记录查询
@@ -346,14 +344,13 @@ public class DisplayFrame_Doctor extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = recordQueryTable.rowAtPoint(e.getPoint());
                 int col = recordQueryTable.columnAtPoint(e.getPoint());
-                if(col == 5){
+                if (col == 5) {
                     Rmodel rm = (Rmodel) recordQueryTable.getModel();
                     Records r = rm.getRecordrow(row);
                     new RecDialog(r);
                 }
             }
         });
-
 
 
         btnRecordSearch.addActionListener(new ActionListener() {
@@ -404,13 +401,13 @@ public class DisplayFrame_Doctor extends JFrame {
         public BtnRenderer() {
             setOpaque(true);
         }
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
             setText(value.toString());
             return this;
         }
     }
-
 
 
     public static void main(String[] args) {
