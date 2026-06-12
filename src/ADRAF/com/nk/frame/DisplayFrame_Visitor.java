@@ -72,7 +72,7 @@ public class DisplayFrame_Visitor extends JFrame {
 
         title = new JLabel("药物不良反应查询反馈平台(更多功能请登录)");
         title.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
-        title.setFont(new Font("null", Font.BOLD, 28));
+        title.setFont(font.ft);
         title.setForeground(Color.WHITE);
 
         btn_panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -94,8 +94,8 @@ public class DisplayFrame_Visitor extends JFrame {
         btn_in.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                RegisterFrame rf = new RegisterFrame();
                 WindowTool.setJF(temp);
+                RegisterFrame rf = new RegisterFrame();
                 dispose();
             }
         });
@@ -245,7 +245,7 @@ public class DisplayFrame_Visitor extends JFrame {
 
         JLabel labelTip = new JLabel("请描述您不适的症状，AI帮您分析可能关联的药物：");
         labelTip.setBounds(30, 20, 540, 30);
-        labelTip.setFont(ADRAF.com.nk.tool.font.ft);
+        labelTip.setFont(font.ft);
 
 
         usertext = new JTextArea();

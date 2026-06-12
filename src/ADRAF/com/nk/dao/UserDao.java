@@ -209,11 +209,11 @@ public class UserDao {
         }
     }
 
-    public static void updateUser(String oldPwd, String newPwd, String okPwd) {
+    public static boolean updateUser(String oldPwd, String newPwd, String okPwd) {
         try {
             if (!newPwd.trim().equals(okPwd.trim())) {
                 JOptionPane.showMessageDialog(null, "两次输入的密码不一致。");
-                return;
+                return false;
             }
             Connection conn = Dao.getConn();
             PreparedStatement ps = conn
@@ -229,20 +229,23 @@ public class UserDao {
                     int flag1 = ps1.executeUpdate();
                     if (flag1 > 0) {
                         JOptionPane.showMessageDialog(null, "修改成功。");
+                        return true;
                     } else {
                         JOptionPane.showMessageDialog(null, "修改失败。");
+                        return false;
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "原密码不正确。");
-                    return;
+                    return false;
                 }
             }
             ps.close();
             conn.close();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "数据库异常！" + ex.getMessage());
-            return;
+            return false;
         }
+        return false;
     }
 
     public static List<User> getPuser() {
@@ -404,13 +407,25 @@ public class UserDao {
         Connection conn = null;
         try {
             conn = Dao.getConn();
-            PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE ad_user SET username = ?, password = ? WHERE username = ?");
+            PreparedStatement ps = conn.prepareStatement("update ad_user set username = ?, password = ? where username = ?");
             ps.setString(1, user.getName());
             ps.setString(2, user.getPwd());
             ps.setString(3, oldName);
             int flag = ps.executeUpdate();
+            ps.close();
             if (flag > 0) {
+                PreparedStatement ps2 = conn.prepareStatement("update ad_record set username = ? where username = ?");
+                ps2.setString(1, user.getName());
+                ps2.setString(2, oldName);
+                ps2.executeUpdate();
+                ps2.close();
+
+                PreparedStatement ps3 = conn.prepareStatement("update ad_record set doctorname = ? where doctorname = ?");
+                ps3.setString(1, user.getName());
+                ps3.setString(2, oldName);
+                ps3.executeUpdate();
+                ps3.close();
+
                 return true;
             } else {
                 JOptionPane.showMessageDialog(null, "修改失败，未找到该用户");

@@ -8,6 +8,7 @@ import ADRAF.com.nk.dao.RecordDao;
 import ADRAF.com.nk.dao.UserDao;
 import ADRAF.com.nk.datamodel.*;
 import ADRAF.com.nk.tool.MmDialog;
+import ADRAF.com.nk.tool.UserStateTool;
 import ADRAF.com.nk.tool.font;
 
 import javax.swing.*;
@@ -70,13 +71,13 @@ public class DisplayFrame_Administrator extends JFrame {
 
         title = new JLabel("药物不良反应反馈平台");
         title.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
-        title.setFont(new Font("null", Font.BOLD, 28));
+        title.setFont(font.ft);
         title.setForeground(Color.WHITE);
 
         btn_panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btn_panel.setOpaque(false);
-        JLabel adminLabel = new JLabel("admin");
-        adminLabel.setFont(new Font("null", Font.PLAIN, 16));
+        JLabel adminLabel = new JLabel("你好" + UserStateTool.getUsername());
+        adminLabel.setFont(font.ft);
         adminLabel.setForeground(Color.WHITE);
         adminLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
         btn_panel.add(adminLabel);
@@ -174,6 +175,7 @@ public class DisplayFrame_Administrator extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardpaanel, "feedback");
+                refreshFeedbackTable();
             }
         });
 
@@ -266,7 +268,7 @@ public class DisplayFrame_Administrator extends JFrame {
 
         JLabel titleLabel = new JLabel("药品管理");
         titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
-        titleLabel.setFont(new Font("null", Font.BOLD, 22));
+        titleLabel.setFont(font.ft);
         panel.add(titleLabel, BorderLayout.NORTH);
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
@@ -958,14 +960,14 @@ public class DisplayFrame_Administrator extends JFrame {
     }
 
 
-    //审核界面
+    //反馈界面
     private JPanel initFeedbackmTable() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
         JLabel titleLabel = new JLabel("反馈管理");
         titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
-        titleLabel.setFont(new Font("null", Font.BOLD, 22));
+        titleLabel.setFont(font.ft);
         panel.add(titleLabel, BorderLayout.NORTH);
 
         feedbackTable = new JTable(new ARmodel(RecordDao.getAllRecords()));
@@ -1007,6 +1009,11 @@ public class DisplayFrame_Administrator extends JFrame {
         feedbackTable.getColumnModel().getColumn(7).setCellRenderer(new BtnRenderer());
     }
 
+    private void refreshFeedbackTable() {
+        feedbackTable.setModel(new ARmodel(RecordDao.getAllRecords()));
+        feedbackstyle();
+    }
+
     private void showFeedbackDetailDialog(Records r) {
         JDialog dialog = new JDialog(this, "反馈详情", true);
         dialog.setSize(500, 480);
@@ -1019,7 +1026,7 @@ public class DisplayFrame_Administrator extends JFrame {
         dialog.add(drugLabel);
         JLabel drugVal = new JLabel(r.getMeName());
         drugVal.setBounds(110, 20, 350, 25);
-        drugVal.setFont(new Font("null", Font.BOLD, 14));
+        drugVal.setFont(font.ft);
         dialog.add(drugVal);
 
         JLabel symLabel = new JLabel("不良反应：");
@@ -1058,9 +1065,16 @@ public class DisplayFrame_Administrator extends JFrame {
         statusLabel.setBounds(20, 205, 80, 25);
         dialog.add(statusLabel);
         JLabel statusVal = new JLabel(r.getStatus() != null ? r.getStatus() : "待审核");
-        statusVal.setBounds(110, 205, 350, 25);
-        statusVal.setForeground(new Color(200, 100, 0));
-        statusVal.setFont(new Font("null", Font.BOLD, 14));
+        statusVal.setBounds(110, 205, 80, 25);
+        if(r.getStatus().equals("已通过")){
+            statusVal.setForeground(new Color(80, 200, 0));
+        }
+        else if(r.getStatus().equals("已驳回")){
+            statusVal.setForeground(new Color(200, 100, 0));
+        }
+        else {
+            statusVal.setForeground(Color.BLACK);
+        }
         dialog.add(statusVal);
 
         JLabel docLabel = new JLabel("审核医生：");

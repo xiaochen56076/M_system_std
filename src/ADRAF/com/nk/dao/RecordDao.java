@@ -86,7 +86,8 @@ public class RecordDao {
         try {
             conn = Dao.getConn();
             ps = conn.prepareStatement(
-                    "SELECT id, username ,drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record where status = '已通过' or status = '已驳回' ORDER BY report_time DESC");
+                    "SELECT id, username ,drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record where (status = '已通过' or status = '已驳回') AND doctorname = ?  ORDER BY report_time DESC");
+            ps.setString(1, UserStateTool.getUsername());
             ResultSet rs = ps.executeQuery();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             while (rs.next()) {

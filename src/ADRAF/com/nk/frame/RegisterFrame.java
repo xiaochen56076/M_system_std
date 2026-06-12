@@ -19,6 +19,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.sql.SQLOutput;
 
 public class RegisterFrame extends JFrame {
 
@@ -56,7 +57,7 @@ public class RegisterFrame extends JFrame {
         this.setSize(550, 350);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setTitle("注册");
         this.setLayout(null);
     }
@@ -221,14 +222,17 @@ public class RegisterFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 User user = new User(usertext.getText().trim(), new String(pwktext.getPassword()), new String(okpwdtext.getPassword()), altext.getText().trim());
 
+                if (UserDao.isUsernameExists(user.getName())) {
+                    JOptionPane.showMessageDialog(null, "该用户名已存在");
+                    return;
+                }
+
                 if ((!UserDao.isUsernameExists(user.getName())) && UserDao.insertUser(user, vcode.getText().trim())) {
                     UserStateTool.setRight(1);
                     UserStateTool.setUsername(user.getName());
                     UserStateTool.setPassword(user.getPwd());
-                    DisplayFrame_Patient dfv = new DisplayFrame_Patient();
+                    new DisplayFrame_Patient();
                     dispose();
-                } else {
-                    JOptionPane.showMessageDialog(null, "该用户名已存在");
                 }
             }
         });

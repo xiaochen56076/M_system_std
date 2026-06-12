@@ -3,6 +3,7 @@ package ADRAF.com.nk.tool;
 import ADRAF.com.nk.bean.Records;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -50,7 +51,16 @@ public class RecDialog extends JDialog {
         lbl5.setBounds(20, 195, 70, 25);
         add(lbl5);
         JLabel val5 = new JLabel(record.getStatus());
-        val5.setBounds(100, 195, 310, 25);
+        val5.setBounds(100, 195, 70, 25);
+        if(record.getStatus().equals("已通过")){
+            val5.setForeground(new Color(80, 200, 0));
+        }
+        else if(record.getStatus().equals("已驳回")){
+            val5.setForeground(new Color(200, 100, 0));
+        }
+        else {
+            val5.setForeground(Color.BLACK);
+        }
         add(val5);
 
         JLabel lbl6 = new JLabel("医生建议");

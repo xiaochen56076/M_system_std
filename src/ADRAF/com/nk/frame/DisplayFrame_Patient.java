@@ -5,6 +5,7 @@ import ADRAF.com.nk.bean.Medicine;
 import ADRAF.com.nk.bean.Records;
 import ADRAF.com.nk.dao.MedicineDao;
 import ADRAF.com.nk.dao.RecordDao;
+import ADRAF.com.nk.dao.UserDao;
 import ADRAF.com.nk.datamodel.Mmodel;
 import ADRAF.com.nk.datamodel.Rmodel;
 import ADRAF.com.nk.tool.MmDialog;
@@ -80,13 +81,13 @@ public class DisplayFrame_Patient extends JFrame {
 
         title = new JLabel("药物不良反应查询反馈平台");
         title.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
-        title.setFont(new Font("null", Font.BOLD, 28));
+        title.setFont(font.ft);
         title.setForeground(Color.WHITE);
 
         btn_panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btn_panel.setOpaque(false);
         JLabel wl = new JLabel("欢迎，" + UserStateTool.getUsername());
-        wl.setFont(new Font("null", Font.PLAIN, 16));
+        wl.setFont(font.ft);
         wl.setForeground(Color.WHITE);
         wl.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
         btn_panel.add(wl);
@@ -123,9 +124,69 @@ public class DisplayFrame_Patient extends JFrame {
         pwdItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("test");
+                JDialog dialog = new JDialog();
+                dialog.setTitle("修改密码");
+                dialog.setSize(400, 280);
+                dialog.setLocationRelativeTo(null);
+                dialog.setLayout(null);
+
+                JLabel oldLabel = new JLabel("原密码：");
+                oldLabel.setBounds(50, 30, 80, 30);
+                oldLabel.setFont(font.ft);
+                dialog.add(oldLabel);
+
+                JTextField oldPwd = new JTextField();
+                oldPwd.setBounds(140, 30, 180, 30);
+                oldPwd.setFont(font.ft);
+                dialog.add(oldPwd);
+
+                JLabel newLabel = new JLabel("新密码：");
+                newLabel.setBounds(50, 80, 80, 30);
+                newLabel.setFont(font.ft);
+                dialog.add(newLabel);
+
+                JPasswordField newPwd = new JPasswordField();
+                newPwd.setBounds(140, 80, 180, 30);
+                newPwd.setFont(font.ft);
+                dialog.add(newPwd);
+
+                JLabel okLabel = new JLabel("确认密码：");
+                okLabel.setBounds(50, 130, 80, 30);
+                okLabel.setFont(font.ft);
+                dialog.add(okLabel);
+
+                JPasswordField okPwd = new JPasswordField();
+                okPwd.setBounds(140, 130, 180, 30);
+                okPwd.setFont(font.ft);
+                dialog.add(okPwd);
+
+                JButton confirmBtn = new JButton("确认修改");
+                confirmBtn.setBounds(100, 190, 100, 35);
+                confirmBtn.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        boolean flag = UserDao.updateUser(new String(oldPwd.getText().trim()), new String(newPwd.getPassword()), new String(okPwd.getPassword()));
+                        if(flag){
+                            dialog.dispose();
+                        }
+                    }
+                });
+                dialog.add(confirmBtn);
+
+                JButton cancelBtn = new JButton("取消");
+                cancelBtn.setBounds(220, 190, 100, 35);
+                cancelBtn.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.dispose();
+                    }
+                });
+                dialog.add(cancelBtn);
+
+                dialog.setVisible(true);
             }
         });
+        sysMenu.add(pwdItem);
         sysMenu.add(logoutItem);
         menuBar.add(sysMenu);
         setJMenuBar(menuBar);
