@@ -57,7 +57,8 @@ public class DisplayFrame_Administrator extends JFrame {
 
     private void init() {
         setSize(1400, 800);
-        setTitle("药物不良反应反馈平台(管理员模式)");
+        setTitle("药物不良反应查询审核管理平台(管理员模式)");
+        setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -69,14 +70,14 @@ public class DisplayFrame_Administrator extends JFrame {
         header.setPreferredSize(new Dimension(0, 40));
         header.setLayout(new BorderLayout());
 
-        title = new JLabel("药物不良反应反馈平台");
+        title = new JLabel("药物不良反应查询审核管理平台");
         title.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
         title.setFont(font.ft);
         title.setForeground(Color.WHITE);
 
         btn_panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btn_panel.setOpaque(false);
-        JLabel adminLabel = new JLabel("你好" + UserStateTool.getUsername());
+        JLabel adminLabel = new JLabel("你好，" + UserStateTool.getUsername());
         adminLabel.setFont(font.ft);
         adminLabel.setForeground(Color.WHITE);
         adminLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
@@ -1066,13 +1067,11 @@ public class DisplayFrame_Administrator extends JFrame {
         dialog.add(statusLabel);
         JLabel statusVal = new JLabel(r.getStatus() != null ? r.getStatus() : "待审核");
         statusVal.setBounds(110, 205, 80, 25);
-        if(r.getStatus().equals("已通过")){
+        if (r.getStatus().equals("已通过")) {
             statusVal.setForeground(new Color(80, 200, 0));
-        }
-        else if(r.getStatus().equals("已驳回")){
+        } else if (r.getStatus().equals("已驳回")) {
             statusVal.setForeground(new Color(200, 100, 0));
-        }
-        else {
+        } else {
             statusVal.setForeground(Color.BLACK);
         }
         dialog.add(statusVal);
@@ -1109,7 +1108,7 @@ public class DisplayFrame_Administrator extends JFrame {
     }
 
 
-    public static void main(String[] args) {
-        new DisplayFrame_Administrator();
-    }
+//    public static void main(String[] args) {
+//        new DisplayFrame_Administrator();
+//    }
 }

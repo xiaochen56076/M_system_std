@@ -11,7 +11,7 @@ public class Records {
     private String status;
     private String doctorOpinion;
 
-    public Records(String username, int id,String meName, String symptom, String days, String reportTime,String status ,String doctorOpinion) {
+    public Records(String username, int id, String meName, String symptom, String days, String reportTime, String status, String doctorOpinion) {
         this.id = id;
         this.username = username;
         this.meName = meName;
@@ -22,7 +22,7 @@ public class Records {
         this.doctorOpinion = doctorOpinion;
     }
 
-    public Records(String docname, int id , String username, String meName, String symptom, String days, String reportTime, String status, String doctorOpinion) {
+    public Records(String docname, int id, String username, String meName, String symptom, String days, String reportTime, String status, String doctorOpinion) {
         this.id = id;
         this.docname = docname;
         this.username = username;

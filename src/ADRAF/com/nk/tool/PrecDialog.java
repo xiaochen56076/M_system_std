@@ -10,12 +10,12 @@ import java.awt.event.ActionListener;
 public class PrecDialog extends JDialog {
     private boolean updated = false;
 
-    public boolean isUpdated(){
+    public boolean isUpdated() {
         return updated;
     }
 
 
-    public PrecDialog (Records record, String status){
+    public PrecDialog(Records record, String status) {
         setTitle("¼ÇÂ¼ÏêÇé");
         setSize(450, 380);
         setLocationRelativeTo(null);
@@ -81,13 +81,11 @@ public class PrecDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 record.setDoctorOpinion(Opinion.getText().trim());
-                RecordDao.updateDoctorrecord(record, status,UserStateTool.getUsername() , PrecDialog.this);
+                RecordDao.updateDoctorrecord(record, status, UserStateTool.getUsername(), PrecDialog.this);
                 updated = true;
                 dispose();
             }
         });
-
-
 
 
         setModal(true);

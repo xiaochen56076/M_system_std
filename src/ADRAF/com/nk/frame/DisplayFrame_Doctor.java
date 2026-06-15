@@ -38,7 +38,7 @@ public class DisplayFrame_Doctor extends JFrame {
     private JTable reviewTable;
     private JScrollPane reviewScrollPane;
 
-    private JTextField recordSearchField;
+//    private JTextField recordSearchField;
     private JTable recordQueryTable;
     private JScrollPane recordQueryScrollPane;
 
@@ -50,7 +50,8 @@ public class DisplayFrame_Doctor extends JFrame {
 
     private void init() {
         setSize(1400, 800);
-        setTitle("药物不良反应查询反馈平台(医护模式)");
+        setTitle("药物不良反应查询审核管理平台(医护模式)");
+        setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -62,7 +63,7 @@ public class DisplayFrame_Doctor extends JFrame {
         header.setPreferredSize(new Dimension(0, 40));
         header.setLayout(new BorderLayout());
 
-        title = new JLabel("药物不良反应查询反馈平台");
+        title = new JLabel("药物不良反应查询审核管理平台");
         title.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
         title.setFont(font.ft);
         title.setForeground(Color.WHITE);
@@ -148,7 +149,7 @@ public class DisplayFrame_Doctor extends JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         boolean flag = UserDao.updateUser(new String(oldPwd.getText().trim()), new String(newPwd.getPassword()), new String(okPwd.getPassword()));
-                        if(flag){
+                        if (flag) {
                             dialog.dispose();
                         }
                     }
@@ -396,15 +397,12 @@ public class DisplayFrame_Doctor extends JFrame {
         panel.setBackground(Color.WHITE);
 
 
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        searchPanel.setBackground(Color.WHITE);
-        JLabel jLabel = new JLabel("关键词：");
-        jLabel.setFont(font.ft);
-        searchPanel.add(jLabel);
-        recordSearchField = new JTextField(20);
-        recordSearchField.setPreferredSize(new Dimension(80, 28));
-        JButton btnRecordSearch = new JButton("筛选");
-
+        JPanel wordPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        wordPanel.setBackground(Color.WHITE);
+        JLabel titleLabel = new JLabel("记录查询");
+        titleLabel.setFont(font.ft);
+        wordPanel.add(titleLabel);
+        panel.add(wordPanel, BorderLayout.NORTH);
 
         recordQueryTable = new JTable(new Rmodel(list));
 
@@ -421,22 +419,6 @@ public class DisplayFrame_Doctor extends JFrame {
                 }
             }
         });
-
-
-        btnRecordSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String keyword = recordSearchField.getText().trim().toLowerCase();
-                System.out.println("测试股");
-            }
-        });
-
-
-        searchPanel.add(recordSearchField);
-        searchPanel.add(btnRecordSearch);
-
-        panel.add(searchPanel, BorderLayout.NORTH);
-
 
         initRecordQueryTable();
 
@@ -480,7 +462,7 @@ public class DisplayFrame_Doctor extends JFrame {
     }
 
 
-    public static void main(String[] args) {
-        new DisplayFrame_Doctor();
-    }
+//    public static void main(String[] args) {
+//        new DisplayFrame_Doctor();
+//    }
 }

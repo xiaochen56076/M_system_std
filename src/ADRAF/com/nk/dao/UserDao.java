@@ -4,14 +4,14 @@ package ADRAF.com.nk.dao;
 import ADRAF.com.nk.bean.User;
 import ADRAF.com.nk.tool.UserStateTool;
 
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 
 
 public class UserDao {
@@ -339,27 +339,27 @@ public class UserDao {
         return users;
     }
 
-    public static List<User> getAllUser() {
-        Connection conn = null;
-        List<User> users = new ArrayList<>();
-        try {
-            conn = Dao.getConn(); // 获得数据库连接
-            // 创建PreparedStatement对象，并传递SQL语句
-            PreparedStatement ps = conn.prepareStatement("select username, password, status from ad_user");
-            ResultSet rs = ps.executeQuery(); // 执行SQL语句，获得查询结果集
-            while (rs.next()) { // 查询到用户信息
-                User u = new User(rs.getString(1),
-                        rs.getString(2),
-                        rs.getString(3));
-                u.setRole(rs.getString(4));
-                users.add(u);
-            }
-            return users;
-        } catch (Exception e) {
-            System.out.println("报错啦");
-            return users;
-        }
-    }
+//    public static List<User> getAllUser() {
+//        Connection conn = null;
+//        List<User> users = new ArrayList<>();
+//        try {
+//            conn = Dao.getConn(); // 获得数据库连接
+//            // 创建PreparedStatement对象，并传递SQL语句
+//            PreparedStatement ps = conn.prepareStatement("select username, password, status from ad_user");
+//            ResultSet rs = ps.executeQuery(); // 执行SQL语句，获得查询结果集
+//            while (rs.next()) { // 查询到用户信息
+//                User u = new User(rs.getString(1),
+//                        rs.getString(2),
+//                        rs.getString(3));
+//                u.setRole(rs.getString(4));
+//                users.add(u);
+//            }
+//            return users;
+//        } catch (Exception e) {
+//            System.out.println("报错啦");
+//            return users;
+//        }
+//    }
 
     public static void setStatus(User user) {
         try {
@@ -390,18 +390,18 @@ public class UserDao {
     }
 
 
-    public static void setPwd(User user) {
-        try {
-            Connection conn = Dao.getConn();
-            PreparedStatement ps1 = conn.prepareStatement("update ad_user set password = ? where username = ?");
-            ps1.setString(1, user.getPwd());
-            ps1.setString(2, user.getName());
-            ps1.executeUpdate();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "数据库异常！" + ex.getMessage());
-            return;
-        }
-    }
+//    public static void setPwd(User user) {
+//        try {
+//            Connection conn = Dao.getConn();
+//            PreparedStatement ps1 = conn.prepareStatement("update ad_user set password = ? where username = ?");
+//            ps1.setString(1, user.getPwd());
+//            ps1.setString(2, user.getName());
+//            ps1.executeUpdate();
+//        } catch (Exception ex) {
+//            JOptionPane.showMessageDialog(null, "数据库异常！" + ex.getMessage());
+//            return;
+//        }
+//    }
 
     public static boolean updateUser(String oldName, User user) {
         Connection conn = null;

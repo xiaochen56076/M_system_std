@@ -38,18 +38,25 @@ public class ADPmodel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         User u = data.get(rowIndex);
-        switch (columnIndex){
-            case 0: return u.getName();
-            case 1: return u.getPwd();
-            case 2: return u.getStatus();
-            case 3: return "编辑资料";
-            case 4: return "重置密码";
-            case 5: return u.getStatus().equals("启用") ? "禁用" :"启用";
-            default: return null;
+        switch (columnIndex) {
+            case 0:
+                return u.getName();
+            case 1:
+                return u.getPwd();
+            case 2:
+                return u.getStatus();
+            case 3:
+                return "编辑资料";
+            case 4:
+                return "重置密码";
+            case 5:
+                return u.getStatus().equals("启用") ? "禁用" : "启用";
+            default:
+                return null;
         }
     }
 
-    public User getUserrow(int row){
+    public User getUserrow(int row) {
         return data.get(row);
     }
 }

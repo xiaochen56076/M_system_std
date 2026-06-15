@@ -19,7 +19,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.sql.SQLOutput;
 
 public class RegisterFrame extends JFrame {
 
@@ -44,14 +43,14 @@ public class RegisterFrame extends JFrame {
     Object[] temp;
 
 
-    public RegisterFrame() throws HeadlessException {
-        init();
-        inittext();
-        intigraph();
-
-
-        this.setVisible(true);
-    }
+//    public RegisterFrame() throws HeadlessException {
+//        init();
+//        inittext();
+//        intigraph();
+//
+//
+//        this.setVisible(true);
+//    }
 
     private void init() {
         this.setSize(550, 350);
@@ -266,10 +265,10 @@ public class RegisterFrame extends JFrame {
         //读取图片资源
         url = getClass().getResource("/ADRAF/com/nk/images/bg_up.png");
         //对象中取出原始图片对象,进行设置参数
-        Image img = new ImageIcon(url).getImage().getScaledInstance(550, 300, Image.SCALE_SMOOTH);
+        Image img = new ImageIcon(url).getImage().getScaledInstance(550, 350, Image.SCALE_SMOOTH);
         bg = new JLabel(new ImageIcon(img));
         //设置显示坐标位置
-        bg.setBounds(0, 0, 550, 300);
+        bg.setBounds(0, 0, 550, 350);
         this.add(bg);
     }
 

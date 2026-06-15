@@ -2,45 +2,44 @@ package ADRAF.com.nk.tool;
 
 /**
  * 保存用户信息工具类，相当于一个全局静态变量
- *
  */
 public class UserStateTool {
-	private static String username = null;
-	private static String password = null;
-	private static String vcode = null;
-	private static int right = 0;
+    private static String username = null;
+    private static String password = null;
+    private static String vcode = null;
+    private static int right = 0;
 
 
-	public static int getRight() {
-		return right;
-	}
+    public static int getRight() {
+        return right;
+    }
 
-	public static void setRight(int right) {
-		UserStateTool.right = right;
-	}
+    public static void setRight(int right) {
+        UserStateTool.right = right;
+    }
 
-	public static void setUsername(String username) {
-		UserStateTool.username = username;
-	}
+    public static void setUsername(String username) {
+        UserStateTool.username = username;
+    }
 
-	public static String getUsername() {
-		return username;
-	}
+    public static String getUsername() {
+        return username;
+    }
 
-	public static void setPassword(String password) {
-		UserStateTool.password = password;
-	}
+    public static void setPassword(String password) {
+        UserStateTool.password = password;
+    }
 
-	public static String getPassword() {
-		return password;
-	}
+    public static String getPassword() {
+        return password;
+    }
 
-	public static void setvcode(String vcode) {
-		UserStateTool.vcode = vcode;
-	}
+    public static void setvcode(String vcode) {
+        UserStateTool.vcode = vcode;
+    }
 
-	public static String getvcode() {
-		return vcode;
-	}
+    public static String getvcode() {
+        return vcode;
+    }
 
 }

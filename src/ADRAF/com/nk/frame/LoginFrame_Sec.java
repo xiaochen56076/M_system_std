@@ -21,9 +21,9 @@ public class LoginFrame_Sec extends JFrame {
     private URL url;
     private JLabel bg;
 
-    public static void main(String[] args) {
-        LoginFrame_Sec thisclass = new LoginFrame_Sec();
-    }
+//    public static void main(String[] args) {
+//        LoginFrame_Sec thisclass = new LoginFrame_Sec();
+//    }
 
     //	初始化一些必要设置
     private void init() {
@@ -41,23 +41,23 @@ public class LoginFrame_Sec extends JFrame {
 
         userLabel = new JLabel("用户名：");
         userLabel.setFont(font.ft);//设置字体
-        userLabel.setBounds(260, 155, 70, 26);
+        userLabel.setBounds(270, 155, 70, 26);
         this.add(userLabel);
 
         usertext = new JTextField();
         usertext.setFont(font.ft);
-        usertext.setBounds(335, 155, 160, 26);
+        usertext.setBounds(345, 155, 160, 26);
         this.add(usertext);
 
 
         pwdLabel = new JLabel("密  码：");
         pwdLabel.setFont(font.ft);
-        pwdLabel.setBounds(260, 200, 70, 26);
+        pwdLabel.setBounds(270, 200, 70, 26);
         this.add(pwdLabel);
 
         pwktext = new JPasswordField();
         pwktext.setFont(font.ft);
-        pwktext.setBounds(335, 200, 160, 26);
+        pwktext.setBounds(345, 200, 160, 26);
         this.add(pwktext);
 
 
@@ -91,9 +91,9 @@ public class LoginFrame_Sec extends JFrame {
     private void initigraph() {
         url = getClass().getResource("/ADRAF/com/nk/images/bg_in.png");
         if (url != null) {
-            Image img = new ImageIcon(url).getImage().getScaledInstance(550, 300, Image.SCALE_SMOOTH);
+            Image img = new ImageIcon(url).getImage().getScaledInstance(550, 350, Image.SCALE_SMOOTH);
             bg = new JLabel(new ImageIcon(img));
-            bg.setBounds(0, 0, 550, 300);
+            bg.setBounds(0, 0, 550, 350);
             this.add(bg);
         }
     }

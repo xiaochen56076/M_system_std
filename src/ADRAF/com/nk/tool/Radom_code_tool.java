@@ -4,14 +4,8 @@ package ADRAF.com.nk.tool;
 // @Time£º2026-06-05-22-41
 // @Project£ºADARF_P
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.Random;
 
 public class Radom_code_tool {
@@ -45,7 +39,7 @@ public class Radom_code_tool {
         graphic.fillRect(0, 0, WIDTH, HEIGHT);
         // 5.»­Ëæ»ú×Ö·û
         Random ran = new Random();
-        for (int i = 0; i <SIZE; i++) {
+        for (int i = 0; i < SIZE; i++) {
             // È¡Ëæ»ú×Ö·ûË÷Òý
             int n = ran.nextInt(chars.length);
             // ÉèÖÃËæ»úÑÕÉ«
@@ -55,7 +49,7 @@ public class Radom_code_tool {
                     null, Font.BOLD + Font.ITALIC, FONT_SIZE));
             // »­×Ö·û
             graphic.drawString(
-                    chars[n] + "", i * WIDTH / SIZE, HEIGHT/2+10);
+                    chars[n] + "", i * WIDTH / SIZE, HEIGHT / 2 + 10);
             // ¼ÇÂ¼×Ö·û
             sb.append(chars[n]);
         }

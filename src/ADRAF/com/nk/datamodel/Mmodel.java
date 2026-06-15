@@ -37,12 +37,18 @@ public class Mmodel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Medicine m = mdata.get(rowIndex);
         switch (columnIndex) {
-            case 0: return m.getEncoding();
-            case 1: return m.getName();
-            case 2: return m.getAdverseReaction();
-            case 3: return m.getContraindication();
-            case 4: return "查看";
-            default: return null;
+            case 0:
+                return m.getEncoding();
+            case 1:
+                return m.getName();
+            case 2:
+                return m.getAdverseReaction();
+            case 3:
+                return m.getContraindication();
+            case 4:
+                return "查看";
+            default:
+                return null;
         }
     }
 

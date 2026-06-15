@@ -67,7 +67,8 @@ public class DisplayFrame_Patient extends JFrame {
 
     private void init() {
         setSize(1400, 800);
-        setTitle("药物不良反应查询反馈平台(患者模式)");
+        setTitle("药物不良反应查询审核管理平台(患者模式)");
+        setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -79,14 +80,14 @@ public class DisplayFrame_Patient extends JFrame {
         header.setPreferredSize(new Dimension(0, 40));
         header.setLayout(new BorderLayout());
 
-        title = new JLabel("药物不良反应查询反馈平台");
+        title = new JLabel("药物不良反应查询审核管理平台");
         title.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
         title.setFont(font.ft);
         title.setForeground(Color.WHITE);
 
         btn_panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btn_panel.setOpaque(false);
-        JLabel wl = new JLabel("欢迎，" + UserStateTool.getUsername());
+        JLabel wl = new JLabel("你好，" + UserStateTool.getUsername());
         wl.setFont(font.ft);
         wl.setForeground(Color.WHITE);
         wl.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
@@ -166,7 +167,7 @@ public class DisplayFrame_Patient extends JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         boolean flag = UserDao.updateUser(new String(oldPwd.getText().trim()), new String(newPwd.getPassword()), new String(okPwd.getPassword()));
-                        if(flag){
+                        if (flag) {
                             dialog.dispose();
                         }
                     }
@@ -418,7 +419,6 @@ public class DisplayFrame_Patient extends JFrame {
                         protected String doInBackground() throws Exception {
                             return AiChat.callai(word);
                         }
-
                         @Override
                         protected void done() {
                             try {
@@ -430,10 +430,6 @@ public class DisplayFrame_Patient extends JFrame {
                     };
                     worker.execute();
                     aitext.setText("正在分析，请稍候...");
-
-                    new Timer(1000, evt -> {
-                        ((Timer) evt.getSource()).stop();
-                    }).start();
                 } catch (Exception ex) {
                     throw new RuntimeException(ex.getMessage());
                 }
@@ -637,7 +633,7 @@ public class DisplayFrame_Patient extends JFrame {
         recordTable.getColumnModel().getColumn(5).setCellRenderer(new BtnRenderer());
     }
 
-    public static void main(String[] args) {
-        new DisplayFrame_Patient();
-    }
+//    public static void main(String[] args) {
+//        new DisplayFrame_Patient();
+//    }
 }

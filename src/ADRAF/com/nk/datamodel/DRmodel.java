@@ -1,6 +1,7 @@
 package ADRAF.com.nk.datamodel;
 
 import ADRAF.com.nk.bean.Records;
+
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
@@ -32,14 +33,22 @@ public class DRmodel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         Records r = data.get(row);
         switch (col) {
-            case 0: return r.getMeName();
-            case 1: return r.getSymptom();
-            case 2: return r.getDays();
-            case 3: return r.getReportTime();
-            case 4: return r.getStatus();
-            case 5: return "驳回";
-            case 6: return "通过";
-            default: return null;
+            case 0:
+                return r.getMeName();
+            case 1:
+                return r.getSymptom();
+            case 2:
+                return r.getDays();
+            case 3:
+                return r.getReportTime();
+            case 4:
+                return r.getStatus();
+            case 5:
+                return "驳回";
+            case 6:
+                return "通过";
+            default:
+                return null;
         }
     }
 

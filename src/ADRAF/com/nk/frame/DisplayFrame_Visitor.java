@@ -55,7 +55,8 @@ public class DisplayFrame_Visitor extends JFrame {
 
     private void init() {
         this.setSize(1400, 800);
-        this.setTitle("药物不良反应查询反馈平台(访客模式)");
+        this.setTitle("药物不良反应查询审核管理平台(访客模式)");
+        this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //设置窗口布局为BorderLayout
@@ -70,7 +71,7 @@ public class DisplayFrame_Visitor extends JFrame {
         header.setPreferredSize(new Dimension(0, 40));
         header.setLayout(new BorderLayout());
 
-        title = new JLabel("药物不良反应查询反馈平台(更多功能请登录)");
+        title = new JLabel("药物不良反应查询审核管理平台(更多功能请登录)");
         title.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
         title.setFont(font.ft);
         title.setForeground(Color.WHITE);
@@ -315,12 +316,7 @@ public class DisplayFrame_Visitor extends JFrame {
                         }
                     };
                     worker.execute();
-
                     aitext.setText("正在分析，请稍候...");
-
-                    new Timer(1000, evt -> {
-                        ((Timer) evt.getSource()).stop();
-                    }).start();
                 } catch (Exception ex) {
                     throw new RuntimeException(ex.getMessage());
                 }
@@ -348,7 +344,7 @@ public class DisplayFrame_Visitor extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        new DisplayFrame_Visitor();
-    }
+//    public static void main(String[] args) {
+//        new DisplayFrame_Visitor();
+//    }
 }

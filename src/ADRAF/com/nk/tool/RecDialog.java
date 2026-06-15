@@ -52,13 +52,11 @@ public class RecDialog extends JDialog {
         add(lbl5);
         JLabel val5 = new JLabel(record.getStatus());
         val5.setBounds(100, 195, 70, 25);
-        if(record.getStatus().equals("已通过")){
+        if (record.getStatus().equals("已通过")) {
             val5.setForeground(new Color(80, 200, 0));
-        }
-        else if(record.getStatus().equals("已驳回")){
+        } else if (record.getStatus().equals("已驳回")) {
             val5.setForeground(new Color(200, 100, 0));
-        }
-        else {
+        } else {
             val5.setForeground(Color.BLACK);
         }
         add(val5);

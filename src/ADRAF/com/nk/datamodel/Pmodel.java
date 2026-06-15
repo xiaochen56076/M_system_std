@@ -33,16 +33,23 @@ public class Pmodel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         User u = data.get(rowIndex);
         switch (columnIndex) {
-            case 0: return u.getName();
-            case 1: return u.getPwd();
-            case 2: return u.getStatus();
+            case 0:
+                return u.getName();
+            case 1:
+                return u.getPwd();
+            case 2:
+                return u.getStatus();
             case 3:
                 String allergy = u.getAllergy();
                 return (allergy == null || allergy.isEmpty()) ? "无" : allergy;
-            case 4: return "编辑资料";
-            case 5: return u.getStatus().equals("禁用") ? "启动":"禁用";
-            case 6: return "删除";
-            default: return null;
+            case 4:
+                return "编辑资料";
+            case 5:
+                return u.getStatus().equals("禁用") ? "启动" : "禁用";
+            case 6:
+                return "删除";
+            default:
+                return null;
         }
     }
 

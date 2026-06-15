@@ -6,7 +6,6 @@ package ADRAF.com.nk.datamodel;
 
 import ADRAF.com.nk.bean.Medicine;
 
-
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
@@ -38,13 +37,20 @@ public class AMmodel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         Medicine m = data.get(row);
         switch (col) {
-            case 0: return m.getEncoding();
-            case 1: return m.getName();
-            case 2: return m.getAdverseReaction();
-            case 3: return m.getContraindication();
-            case 4: return "ÐÞ¸Ä";
-            case 5: return "É¾³ý";
-            default: return null;
+            case 0:
+                return m.getEncoding();
+            case 1:
+                return m.getName();
+            case 2:
+                return m.getAdverseReaction();
+            case 3:
+                return m.getContraindication();
+            case 4:
+                return "ÐÞ¸Ä";
+            case 5:
+                return "É¾³ý";
+            default:
+                return null;
         }
     }
 

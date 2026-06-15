@@ -36,13 +36,20 @@ public class Rmodel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Records m = data.get(rowIndex);
         switch (columnIndex) {
-            case 0: return m.getMeName();
-            case 1: return m.getSymptom();
-            case 2: return m.getDays();
-            case 3: return m.getReportTime();
-            case 4: return m.getStatus();
-            case 5: return "查看";
-            default: return null;
+            case 0:
+                return m.getMeName();
+            case 1:
+                return m.getSymptom();
+            case 2:
+                return m.getDays();
+            case 3:
+                return m.getReportTime();
+            case 4:
+                return m.getStatus();
+            case 5:
+                return "查看";
+            default:
+                return null;
         }
     }
 

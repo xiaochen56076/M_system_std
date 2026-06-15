@@ -2,11 +2,12 @@ package ADRAF.com.nk.dao;
 
 
 import ADRAF.com.nk.bean.Medicine;
-import ADRAF.com.nk.tool.UserStateTool;
 
 import javax.swing.*;
-import java.awt.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
@@ -49,7 +50,7 @@ public class MedicineDao {
     }
 
 
-    public static boolean insertMedicine(Medicine m){
+    public static boolean insertMedicine(Medicine m) {
         Connection conn = null;
         PreparedStatement ps = null;
         conn = Dao.getConn();
@@ -61,7 +62,7 @@ public class MedicineDao {
             ps.setString(4, m.getContraindication());
             int flag = ps.executeUpdate();
             return flag > 0;
-        }catch (Exception e){
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "´íÎó");
             return false;
         } finally {
@@ -79,7 +80,7 @@ public class MedicineDao {
     }
 
 
-    public static List<Medicine> seacrchMedicine(String keyword){
+    public static List<Medicine> seacrchMedicine(String keyword) {
         Connection conn = null;
         PreparedStatement ps = null;
         conn = Dao.getConn();
@@ -88,7 +89,7 @@ public class MedicineDao {
             ps.setString(1, "%" + keyword + "%");
             ResultSet rs = ps.executeQuery();
             List<Medicine> list = new Vector<>();
-            while(rs.next()){
+            while (rs.next()) {
                 Medicine m = new Medicine();
                 m.setEncoding(rs.getString(1));
                 m.setName(rs.getString(2));
@@ -99,7 +100,7 @@ public class MedicineDao {
             return list;
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             try {
                 if (ps != null) {
                     ps.close();
@@ -114,7 +115,7 @@ public class MedicineDao {
     }
 
 
-    public static void deleteMedicine(Medicine m){
+    public static void deleteMedicine(Medicine m) {
         Connection conn = null;
         PreparedStatement ps = null;
         conn = Dao.getConn();
@@ -124,7 +125,7 @@ public class MedicineDao {
             int flag = ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             try {
                 if (ps != null) {
                     ps.close();
@@ -155,7 +156,11 @@ public class MedicineDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try { if (ps != null) ps.close(); if (conn != null) conn.close(); } catch (Exception e) {}
+            try {
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+            }
         }
     }
 

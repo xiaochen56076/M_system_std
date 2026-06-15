@@ -18,36 +18,40 @@ import java.util.List;
 
 public class RecordDao {
 
-    public static List<Records> searchMyRecords(String keyword) {
-        List<Records> list = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = Dao.getConn();
-            ps = conn.prepareStatement(
-                    "SELECT drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record WHERE username = ? AND (drug_name LIKE ? OR symptom LIKE ?) ORDER BY report_time DESC");
-            ps.setString(1, UserStateTool.getUsername());
-            ps.setString(2, "%" + keyword + "%");
-            ps.setString(3, "%" + keyword + "%");
-            ResultSet rs = ps.executeQuery();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            while (rs.next()) {
-                list.add(new Records(
-                        UserStateTool.getUsername(),
-                        rs.getString("drug_name"),
-                        rs.getString("symptom"),
-                        rs.getString("days"),
-                        sdf.format(rs.getTimestamp("report_time")),
-                        rs.getString("doctor_opinion")
-                ));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try { if (ps != null) ps.close(); if (conn != null) conn.close(); } catch (Exception e) {}
-        }
-        return list;
-    }
+//    public static List<Records> searchMyRecords(String keyword) {
+//        List<Records> list = new ArrayList<>();
+//        Connection conn = null;
+//        PreparedStatement ps = null;
+//        try {
+//            conn = Dao.getConn();
+//            ps = conn.prepareStatement(
+//                    "SELECT drug_name, symptom, days, report_time, status, doctor_opinion FROM ad_record WHERE username = ? AND (drug_name LIKE ? OR symptom LIKE ?) ORDER BY report_time DESC");
+//            ps.setString(1, UserStateTool.getUsername());
+//            ps.setString(2, "%" + keyword + "%");
+//            ps.setString(3, "%" + keyword + "%");
+//            ResultSet rs = ps.executeQuery();
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//            while (rs.next()) {
+//                list.add(new Records(
+//                        UserStateTool.getUsername(),
+//                        rs.getString("drug_name"),
+//                        rs.getString("symptom"),
+//                        rs.getString("days"),
+//                        sdf.format(rs.getTimestamp("report_time")),
+//                        rs.getString("doctor_opinion")
+//                ));
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                if (ps != null) ps.close();
+//                if (conn != null) conn.close();
+//            } catch (Exception e) {
+//            }
+//        }
+//        return list;
+//    }
 
     public static List<Records> getnoPatientRecords() {
         List<Records> list = new ArrayList<>();
@@ -74,7 +78,11 @@ public class RecordDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try { if (ps != null) ps.close(); if (conn != null) conn.close(); } catch (Exception e) {}
+            try {
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+            }
         }
         return list;
     }
@@ -105,7 +113,11 @@ public class RecordDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try { if (ps != null) ps.close(); if (conn != null) conn.close(); } catch (Exception e) {}
+            try {
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+            }
         }
         return list;
     }
@@ -136,7 +148,11 @@ public class RecordDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try { if (ps != null) ps.close(); if (conn != null) conn.close(); } catch (Exception e) {}
+            try {
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+            }
         }
         return list;
     }
@@ -167,39 +183,42 @@ public class RecordDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try { if (ps != null) ps.close(); if (conn != null) conn.close(); } catch (Exception e) {}
-        }
-        return list;
-    }
-
-    public static void deleteRecord(Records r) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = Dao.getConn();
-            ps = conn.prepareStatement("delete from ad_record where id = ?");
-            ps.setInt(1, r.getId());
-            ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
             try {
                 if (ps != null) ps.close();
                 if (conn != null) conn.close();
             } catch (Exception e) {
             }
         }
+        return list;
     }
 
+//    public static void deleteRecord(Records r) {
+//        Connection conn = null;
+//        PreparedStatement ps = null;
+//        try {
+//            conn = Dao.getConn();
+//            ps = conn.prepareStatement("delete from ad_record where id = ?");
+//            ps.setInt(1, r.getId());
+//            ps.executeUpdate();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                if (ps != null) ps.close();
+//                if (conn != null) conn.close();
+//            } catch (Exception e) {
+//            }
+//        }
+//    }
 
 
-        public static void updateDoctorrecord(Records record, String status,String docname , Component PrecDialog) {
+    public static void updateDoctorrecord(Records record, String status, String docname, Component PrecDialog) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = Dao.getConn();
             ps = conn.prepareStatement("update ad_record set doctor_opinion=?,status =? ,doctorname = ? where username = ? and id = ?");
-            ps.setString(1,record.getDoctorOpinion());
+            ps.setString(1, record.getDoctorOpinion());
             ps.setString(2, status);
             ps.setString(3, docname);
             ps.setString(4, record.getUsername());
@@ -214,8 +233,10 @@ public class RecordDao {
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) ps.close(); if (conn != null) conn.close();
-            } catch (Exception e) {}
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -236,8 +257,10 @@ public class RecordDao {
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) ps.close(); if (conn != null) conn.close();
-            } catch (Exception e) {}
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+            }
         }
     }
 

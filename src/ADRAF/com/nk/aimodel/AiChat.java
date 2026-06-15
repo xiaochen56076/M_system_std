@@ -34,16 +34,16 @@ public class AiChat {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(AI_API_URL))
                 .header("Content-Type", "application/json")
-                .header("Authorization","Bearer " + AI_API_KEY)
+                .header("Authorization", "Bearer " + AI_API_KEY)
                 .timeout(Duration.ofSeconds(30))
                 .POST(HttpRequest.BodyPublishers.ofString(createjson(word)))
                 .build();
 
         //等待数据的回复
-        HttpResponse<String> response  = Client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = Client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() != 200){
-            throw new RuntimeException("状态码："+ response.statusCode() + "\n内容：" + response.body());
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("状态码：" + response.statusCode() + "\n内容：" + response.body());
         }
 
         String me = new JSONObject(response.body())
@@ -58,9 +58,9 @@ public class AiChat {
 
 
     //构建json体
-    private static String createjson(String word){
+    private static String createjson(String word) {
         //创建消息对象
-        JSONObject Msg  = new JSONObject();
+        JSONObject Msg = new JSONObject();
         Msg.put("role", "system");
         Msg.put("content", AI_Content);
 
